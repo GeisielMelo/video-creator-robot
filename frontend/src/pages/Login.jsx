@@ -65,7 +65,7 @@ const Login = () => {
     <Section>
       <Container>
         <Logo src={logoImage} alt="logo" width={200} height={200} />
-        <Title>Sign up</Title>
+        <Title>Sign in</Title>
 
         <Form onSubmit={handleSubmit}>
           <>
