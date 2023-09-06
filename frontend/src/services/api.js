@@ -9,8 +9,8 @@ export const createUser = async (name, lastName, email, password) => {
   return api.post("/users/", { name, lastName, email, password });
 };
 
-export const fetchUserData = async (email) => {
-  return api.get(`/users/${email}/`);
+export const fetchUserData = async (id) => {
+  return api.get(`/users/${id}/`);
 };
 
 // Sessions
