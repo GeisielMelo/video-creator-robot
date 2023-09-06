@@ -6,6 +6,8 @@ import { Loading } from "./components/Loading";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Workbench from "./pages/Workbench";
+import Dubbing from "./pages/Dubbing";
 
 const AppRoutes = () => {
   const Private = ({ children }) => {
@@ -37,47 +39,18 @@ const AppRoutes = () => {
   };
 
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <Routes>
-          <Route
-            path="*"
-            element={
-              <Public>
-                <Login />
-              </Public>
-            }
-          />
-
-          <Route
-            path="/sign-in"
-            element={
-              <Public>
-                <Login />
-              </Public>
-            }
-          />
-
-          <Route
-            path="/sign-up"
-            element={
-              <Public>
-                <Register />
-              </Public>
-            }
-          />
-
-          <Route
-            path="/"
-            element={
-              <Private>
-                <Index />
-              </Private>
-            }
-          />
-        </Routes>
-      </AuthProvider>
-    </BrowserRouter>
+  <BrowserRouter>
+    <AuthProvider>
+      <Routes>
+        <Route path="/sign-in" element={<Public><Login /></Public>} />
+        <Route path="/sign-up" element={<Public><Register /></Public>} />
+        <Route path="*" element={<Public><Login /></Public>} />
+        <Route path="/" element={<Private><Index /></Private>} />
+        <Route path="/ai/workbench" element={<Private><Workbench/></Private>} />
+        <Route path="/ai/dubbing" element={<Private><Workbench><Dubbing/></Workbench></Private>} />
+      </Routes>
+    </AuthProvider>
+  </BrowserRouter>
   );
 };
 
