@@ -24,6 +24,7 @@ const Content = styled.div`
   height: calc(100% - 50px);
   flex: 1;
   overflow-y: auto;
+  padding: 20px;
 `;
 
 const Navbar = styled.div`
