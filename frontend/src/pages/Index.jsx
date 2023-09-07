@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 const Section = styled.section`
@@ -18,12 +18,12 @@ const Button = styled.button`
 `;
 
 const Index = () => {
-  const { logout } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   return (
     <Section>
       <h1>Hello World</h1>
-      <Button onClick={(e) => logout()}>Logout</Button>
+      <Button onClick={() => navigate("/ai/workbench")}>START</Button>
     </Section>
   );
 };
