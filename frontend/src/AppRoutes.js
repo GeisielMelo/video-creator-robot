@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Workbench from "./pages/Workbench";
 import Dubbing from "./pages/Dubbing";
+import WorkbenchOptions from "./components/WorkbenchOptions"
 
 const AppRoutes = () => {
   const Private = ({ children }) => {
@@ -46,7 +47,7 @@ const AppRoutes = () => {
         <Route path="/sign-up" element={<Public><Register /></Public>} />
         <Route path="*" element={<Public><Login /></Public>} />
         <Route path="/" element={<Private><Index /></Private>} />
-        <Route path="/ai/workbench" element={<Private><Workbench/></Private>} />
+        <Route path="/ai/workbench" element={<Private><Workbench><WorkbenchOptions/></Workbench></Private>} />
         <Route path="/ai/dubbing" element={<Private><Workbench><Dubbing/></Workbench></Private>} />
       </Routes>
     </AuthProvider>
