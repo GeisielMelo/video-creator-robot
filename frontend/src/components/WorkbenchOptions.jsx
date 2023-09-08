@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import filters from "../config/WorkbenchCards.JSON";
+import { filters } from "../config/workbenchCards.js";
 import Card from "./Card";
 
 const Filter = styled.div`
@@ -20,15 +20,13 @@ const WorkbenchOptions = () => {
   const tags = ["all", "copyright", "audio creation", "video creation", "picture creation"];
   const [selectedTag, setSelectedTag] = useState("all");
 
-  // Função para renderizar cards baseados no json filters.
-  // Renderiza todos os itens que contem a tag selecionada, (cada item presente no JSON contem uma key chamada "tag" que é uma arrway com todas as tags, se a tag existir dentro da arrwayy, renderize o item.)
   const handleRenderCards = () => {
-    return (
-      <Card title="Ai Text Dubbing" description="Ai Text Dubbing, dubbing in more than 140 languages." buttonDescription="Start Dubbing" url="/ai/dubbing" />
-    );
-  };
+    const filteredCards = filters.filter((item) => item.tags.includes(selectedTag) || selectedTag === "all");
 
-  console.log(filters)
+    return filteredCards.map((item, index) => (
+      <Card key={index} title={item.title} description={item.description} buttonDescription={item.buttonDescription} url={item.url} />
+    ));
+  };
 
   return (
     <>
