@@ -12,7 +12,7 @@ export const SubmitButton = styled.button`
   border-radius: 27px;
   cursor: pointer;
 
-  background: rgb(213, 50, 53);
+  background: #06d3db;
   color: rgb(252, 252, 252);
   &:disabled {
     border: 2px solid rgba(173, 173, 173, 0.3);
