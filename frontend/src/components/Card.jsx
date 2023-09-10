@@ -8,14 +8,18 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   margin: 20px 0;
+  padding: 10px 20px;
+  border-radius: 8px;
 `;
 
 const Title = styled.h1`
   font-size: ${(props) => props.theme.font.size.sm};
+  margin: 20px 0;
 `;
 
 const Description = styled.p`
   font-size: ${(props) => props.theme.font.size.es};
+  margin: 20px 0;
 `;
 
 const Button = styled.button`
