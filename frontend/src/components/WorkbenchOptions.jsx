@@ -6,6 +6,7 @@ import Card from "./Card";
 const Filter = styled.div`
   display: flex;
   align-items: center;
+  border-radius: 8px;
 
   width: 100%;
   height: 70px;
