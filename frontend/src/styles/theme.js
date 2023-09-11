@@ -21,11 +21,16 @@ export const theme = {
       Light: "",
       Lightest: "",
     },
+    Blue: {
+      default: "#6792f8",
+      Light: "#84affa",
+      Lightest: "#eff3fc",
+    },
   },
   font: {
     family: {
       one: "'Mark-Pro', sans-serif",
-      two: "",
+      two: "'Helvetica Neue Regular', sans-serif",
     },
     size: {
       bg: "32px",
