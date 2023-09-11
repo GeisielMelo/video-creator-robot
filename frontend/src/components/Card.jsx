@@ -9,7 +9,10 @@ const Container = styled.div`
   height: 100%;
   margin: 20px 0;
   padding: 10px 20px;
-  border-radius: 8px;
+  border-radius: 12px;
+  background-color: ${(props) => props.theme.color.White.default};
+  box-shadow: 0 1px 3px ${(props) => props.theme.color.Blue.default};
+  cursor:  pointer;
 `;
 
 const Title = styled.h1`
@@ -18,12 +21,13 @@ const Title = styled.h1`
 `;
 
 const Description = styled.p`
-  font-size: ${(props) => props.theme.font.size.es};
+  font-size: ${(props) => props.theme.font.size.sm};
   margin: 20px 0;
 `;
 
-const Button = styled.button`
-  font-size: ${(props) => props.theme.font.size.es};
+const Action = styled.p`
+  font-size: ${(props) => props.theme.font.size.sm};
+  color: ${(props) => props.theme.color.Blue.default};
 `;
 
 const Card = ({ title, description, buttonDescription, url }) => {
@@ -33,7 +37,7 @@ const Card = ({ title, description, buttonDescription, url }) => {
     <Container onClick={() => navigate(`${url}`)}>
       <Title>{title}</Title>
       <Description>{description}</Description>
-      <Button>{buttonDescription}</Button>
+      <Action>{buttonDescription}</Action>
     </Container>
   );
 };
