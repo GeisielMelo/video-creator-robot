@@ -49,6 +49,7 @@ const AppRoutes = () => {
         <Route path="/" element={<Private><Index /></Private>} />
         <Route path="/ai/workbench" element={<Private><Workbench><WorkbenchOptions/></Workbench></Private>} />
         <Route path="/ai/dubbing" element={<Private><Workbench><Dubbing/></Workbench></Private>} />
+        <Route path="/ai/projects" element={<Private><Workbench>Nothing XD</Workbench></Private>} />
       </Routes>
     </AuthProvider>
   </BrowserRouter>
