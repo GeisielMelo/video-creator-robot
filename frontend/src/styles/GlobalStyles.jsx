@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-import Font from "../fonts/Mark-Pro.ttf" 
+import Font from "../fonts/Mark-Pro.ttf"
 import { createGlobalStyle } from "styled-components";
 export const GlobalStyle = createGlobalStyle`
 
@@ -10,6 +10,7 @@ export const GlobalStyle = createGlobalStyle`
     outline: none;
     border: none;
     text-decoration: none;
+    font-family: ${(props) => props.theme.font.family.one};
 }
 
 // Custom scroll bar
