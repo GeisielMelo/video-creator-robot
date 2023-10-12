@@ -1,15 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext  } from "react";
+import { AuthContext } from "../../context/AuthContext";
 import Nav from "../../components/index/Nav";
 import Hero from "../../components/index/Hero";
 import Footer from "../../components/index/Footer";
 import { Wrapper } from "../../components/Wrapper";
 import { Loading } from "../../components/Loading";
-import { DeveloperMode } from "../../components/DeveloperMode";
 
 const Index = () => {
+  const { user } = useContext(AuthContext);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setIsLoggedIn(true);
+    }
+  }, [user]);
 
   useEffect(() => {
     if (loading) {
@@ -37,7 +44,6 @@ const Index = () => {
         <Loading />
       ) : (
         <>
-          <DeveloperMode onChange={() => setIsLoggedIn(!isLoggedIn)} value={isLoggedIn} />
           <Nav isAuthenticated={isLoggedIn} isMobile={isMobile} />
           <Hero />
           <Footer />
