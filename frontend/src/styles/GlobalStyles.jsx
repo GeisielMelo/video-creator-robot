@@ -1,5 +1,3 @@
-// eslint-disable-next-line
-import Font from "../fonts/Mark-Pro.ttf"
 import { createGlobalStyle } from "styled-components";
 export const GlobalStyle = createGlobalStyle`
 
@@ -10,20 +8,24 @@ export const GlobalStyle = createGlobalStyle`
     outline: none;
     border: none;
     text-decoration: none;
-    font-family: ${(props) => props.theme.font.family.one};
+}
+
+body  {
+    background-color: #ffffff;
 }
 
 // Custom scroll bar
 ::-webkit-scrollbar {
     width: 5px;
+    height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-    background: ${(props) => props.theme.color.silver};
+    background: #fff;
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: ${(props) => props.theme.color.blue};
+    background: linear-gradient(135deg, #393E46, #222831);
     border-radius: 4px;
 } 
 `;

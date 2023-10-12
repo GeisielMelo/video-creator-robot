@@ -1,7 +1,15 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
-import { AuthContext } from "../context/AuthContext";
-import { fetchUserData } from "../services/api";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { useNavigate } from "react-router-dom"; // Remover essa import quando adicionar o AuthContext
+
+const User = styled.div`
+  position: absolute;
+  top: -8px;
+  right: 0;
+  margin: 20px;
+  z-index: 2;
+`;
 
 const Menu = styled.div`
   position: absolute;
@@ -10,15 +18,16 @@ const Menu = styled.div`
   margin: 20px;
   padding: 20px;
   border-radius: 10px;
-  background-color: ${(props) => props.theme.color.White.default};
-  box-shadow: 0 1px 5px ${(props) => props.theme.color.Navy.default};
+  background-color: #fff;
+  box-shadow: 0 1px 5px black;
+  z-index: 2;
 `;
 
 const Line = styled.div`
   width: 100%;
   height: 1px;
   margin: 10px 0;
-  background-color: ${(props) => props.theme.color.White.default};
+  background-color: #b7b5b5;
 `;
 
 const Button = styled.button`
@@ -28,26 +37,40 @@ const Button = styled.button`
   border: none;
   cursor: pointer;
   overflow: hidden;
-  box-shadow: 0 1px 5px ${(props) => props.theme.color.Navy.default};
+  box-shadow: 0 1px 5px ${(props) => (props["data-shadow"] ? "green" : "black")};
   background-color: transparent;
+  color: #3b3b4f;
+  transition: all 0.2s ease-in-out;
+  &:hover {
+    box-shadow: 0 1px 5px #6453e4;
+  }
+  &:disabled {
+    cursor: default;
+  }
+`;
+
+const Image = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const Name = styled.h1`
-  font-family: ${(props) => props.theme.font.family.one};
-  font-size: ${(props) => props.theme.font.size.sm};
+  font-size: 20px;
   font-style: normal;
   font-weight: 500;
   line-height: 150%;
   text-transform: capitalize;
+  font-family: ${(props) => props.theme.font.family.one};
 `;
 
 const Email = styled.h2`
-  font-family: ${(props) => props.theme.font.family.one};
-  font-size: ${(props) => props.theme.font.size.es};
+  font-size: 16px;
   font-style: normal;
   font-weight: 400;
   line-height: 150%;
-  color: ${(props) => props.theme.color.Slate.Lightest};
+  color: #b7b5b5;
+  font-family: ${(props) => props.theme.font.family.one};
 `;
 
 const Option = styled.p`
@@ -55,14 +78,12 @@ const Option = styled.p`
   cursor: pointer;
   overflow: hidden;
 
-  font-family: ${(props) => props.theme.font.family.one};
-  font-size: ${(props) => props.theme.font.size.es};
   font-style: normal;
   font-weight: 400;
   line-height: 150%;
+  font-family: ${(props) => props.theme.font.family.two};
 
   &:hover {
-    background-color: ${(props) => props.theme.color.Slate.Lightest};
     border-radius: 4px;
     padding-left: 10px;
   }
@@ -70,35 +91,39 @@ const Option = styled.p`
 
 const Profile = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { logout, user } = useContext(AuthContext);
-  const [userData, setUserData] = useState(null);
+  const menuRef = useRef();
+  const navigate = useNavigate(); // Remover essa import quando adicionar o AuthContext
 
   useEffect(() => {
-    if (!userData) {
-      const fetchData = async () => {
-        try {
-          const response = await fetchUserData(user.id);
-          setUserData(response.data);
-        } catch (error) {
-          console.log("Error on fetch user Data.");
-        }
-      };
-      fetchData();
-    }
-  }, [user, userData]);
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <>
-      <Button onClick={(e) => setMenuOpen(!menuOpen)}>{userData ? userData.name[0].toUpperCase() : "null"}</Button>
+      <User>
+        <Button data-shadow={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
+          <Image>
+            <AccountCircleIcon fontSize="large" />
+          </Image>
+        </Button>
+      </User>
 
-      {menuOpen && userData !== null && (
-        <Menu>
-          <Name>
-            {userData.name} {userData.lastName}
-          </Name>
-          <Email>{user.email}</Email>
+      {menuOpen && (
+        <Menu ref={menuRef}>
+          <Name>David Contabil</Name>
+          <Email>david@tarssolucoes.com.br</Email>
           <Line />
-          <Option onClick={(e) => logout()}>Logout</Option>
+          <Option onClick={() => navigate("/")}>Logout</Option>
         </Menu>
       )}
     </>
