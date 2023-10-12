@@ -116,7 +116,7 @@ const Register = () => {
         <input type="password" placeholder="Senha" />
         <button>Cadastrar</button>
         <p>
-          Já possui uma conta? <span onClick={() => navigate("/login")}>Entrar</span>
+          Já possui uma conta? <span onClick={() => navigate("/sign-in")}>Entrar</span>
         </p>
       </Container>
       <Footer>

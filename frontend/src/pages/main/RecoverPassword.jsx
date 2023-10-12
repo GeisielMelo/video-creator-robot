@@ -115,7 +115,7 @@ const RecoverPassword = () => {
         <input type="email" placeholder="Email" />
         <button>Obter link de redefinição</button>
         <p>
-          Não se preocupe! <span onClick={() => navigate("/login")}>Me leve de volta ao login</span>
+          Não se preocupe! <span onClick={() => navigate("/sign-in")}>Me leve de volta ao login</span>
         </p>
       </Container>
       <Footer>

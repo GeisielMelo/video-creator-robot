@@ -126,9 +126,9 @@ const Login = () => {
         <input type="password" placeholder="Senha" />
         <button>Entrar</button>
         <p>
-          Ainda não tem uma conta? <span onClick={() => navigate("/cadastro")}>Cadastre-se</span>
+          Ainda não tem uma conta? <span onClick={() => navigate("/sign-up")}>Cadastre-se</span>
         </p>
-        <span onClick={() => navigate("/login/recuperar-senha")}>
+        <span onClick={() => navigate("/sign-up/forgot-password")}>
           <a>Esqueceu a senha?</a>
         </span>
       </Container>
