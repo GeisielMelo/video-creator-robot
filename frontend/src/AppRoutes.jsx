@@ -28,8 +28,9 @@ const AppRoutes = () => {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          <Route path="*" element={<Public><Index /></Public>} />
-          <Route path="/" element={<Public><Index /></Public>} />
+          <Route path="*" element={<Index />}/>
+          <Route path="/" element={<Index />}/>
+          
           <Route path="/sign-in" element={<Public><Login /></Public>} />
           <Route path="/sign-up" element={<Public><Register /></Public>} />
           <Route path="/sign-up/forgot-password" element={<Public><RecoverPassword /></Public>} />
