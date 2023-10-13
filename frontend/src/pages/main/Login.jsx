@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+import { isEmail } from "../../utils/fields";
 import styled from "styled-components";
 
 const Section = styled.section`
@@ -131,13 +132,20 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (loginForm.email === "" || loginForm.password === "") {
+    const { email, password } = loginForm;
+
+    if (email === "" || password === "") {
       return alert("Fill in all fields");
+    }
+
+    if (!isEmail(email)) {
+      alert("Invalid email");
+      return;
     }
 
     try {
       setLoading(true);
-      await login(loginForm.email, loginForm.password);
+      await login(email.toLowerCase(), password);
       setLoading(false);
     } catch (error) {
       setLoading(false);

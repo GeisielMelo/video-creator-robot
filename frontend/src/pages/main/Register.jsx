@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
+import { isEmail } from "../../utils/fields";
 import styled from "styled-components";
 
 const Section = styled.section`
@@ -52,6 +54,12 @@ const Container = styled.div`
     &:focus {
       border-color: #fff;
     }
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+  .passwords {
+    border-color: ${(props) => (props["data-passwords"] ? "#3e454e" : "#dd3009")};
   }
   button {
     display: flex;
@@ -70,6 +78,10 @@ const Container = styled.div`
     color: #12181f;
     &:hover {
       background-color: #8efbf7;
+    }
+    &:disabled {
+      background-color: #3e454e;
+      cursor: not-allowed;
     }
   }
   p {
@@ -107,14 +119,102 @@ const Footer = styled.footer`
 
 const Register = () => {
   const navigate = useNavigate();
+  const { user, register } = useContext(AuthContext);
+  const [registerForm, setRegisterForm] = useState({ name: "", lastName: "", email: "", password: "", confirmPassword: "" });
+  const [loading, setLoading] = useState(false);
+  const [passwordMatch, setPasswordMatch] = useState(true);
+
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    if (registerForm.password !== registerForm.confirmPassword) {
+      setPasswordMatch(false);
+    } else {
+      setPasswordMatch(true);
+    }
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { name, lastName, email, password, confirmPassword } = registerForm;
+
+    if (!name || !lastName || !email || !password || !confirmPassword) {
+      alert("Fill all fields");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      alert("Passwords don't match");
+      return;
+    }
+
+    if (!isEmail(email)) {
+      alert("Invalid email");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await register(name.toLowerCase(), lastName.toLowerCase(), email.toLowerCase(), password);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      if (error.response?.status === 409) {
+        alert("Email already in use");
+      } else {
+        alert("Something went wrong");
+      }
+    }
+  };
 
   return (
     <Section>
-      <Container>
+      <Container data-passwords={passwordMatch}>
         <h1>Cadastre-se com e-mail</h1>
-        <input type="email" placeholder="Email" />
-        <input type="password" placeholder="Senha" />
-        <button>Cadastrar</button>
+        <input
+          type="text"
+          placeholder="Nome"
+          value={registerForm.name}
+          onChange={(e) => setRegisterForm({ ...registerForm, name: e.target.value })}
+          disabled={loading}
+        />
+        <input
+          type="text"
+          placeholder="Sobrenome"
+          value={registerForm.lastName}
+          onChange={(e) => setRegisterForm({ ...registerForm, lastName: e.target.value })}
+          disabled={loading}
+        />
+        <input
+          type="email"
+          placeholder="Email"
+          value={registerForm.email}
+          onChange={(e) => setRegisterForm({ ...registerForm, email: e.target.value })}
+          disabled={loading}
+        />
+        <input
+          className="passwords"
+          type="password"
+          placeholder="Senha"
+          value={registerForm.password}
+          onChange={(e) => setRegisterForm({ ...registerForm, password: e.target.value })}
+          disabled={loading}
+        />
+        <input
+          className="passwords"
+          type="password"
+          placeholder="Confirmar Senha"
+          value={registerForm.confirmPassword}
+          onChange={(e) => setRegisterForm({ ...registerForm, confirmPassword: e.target.value })}
+          disabled={loading}
+        />
+        <button onClick={handleSubmit} disabled={loading || !passwordMatch}>
+          Cadastrar
+        </button>
         <p>
           Já possui uma conta? <span onClick={() => navigate("/sign-in")}>Entrar</span>
         </p>
