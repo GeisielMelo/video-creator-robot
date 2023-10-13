@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 import styled from "styled-components";
 
 const Section = styled.section`
@@ -117,18 +118,62 @@ const Footer = styled.footer`
 
 const Login = () => {
   const navigate = useNavigate();
+  const { user, login } = useContext(AuthContext);
+  const [loginForm, setLoginForm] = useState({ email: "", password: "" });
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (loginForm.email === "" || loginForm.password === "") {
+      return alert("Fill in all fields");
+    }
+
+    try {
+      setLoading(true);
+      await login(loginForm.email, loginForm.password);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      if (error.response?.status === 401) {
+        return alert("Invalid email or password.");
+      } else {
+        return alert("something went wrong");
+      }
+    }
+  };
 
   return (
     <Section>
       <Container>
         <h1>Entrar</h1>
-        <input type="email" placeholder="Email" />
-        <input type="password" placeholder="Senha" />
-        <button>Entrar</button>
+        <input
+          type="email"
+          placeholder="Email"
+          value={loginForm.email}
+          onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
+          disabled={loading}
+        />
+        <input
+          type="password"
+          placeholder="Senha"
+          value={loginForm.password}
+          onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
+          disabled={loading}
+        />
+        <button onClick={handleSubmit} disabled={loading}>
+          {loading ? "Loading..." : "Entrar"}
+        </button>
         <p>
           Ainda não tem uma conta? <span onClick={() => navigate("/sign-up")}>Cadastre-se</span>
         </p>
-        <span onClick={() => navigate("/sign-up/forgot-password")}>
+        <span disabled={loading} onClick={() => navigate("/sign-up/forgot-password")}>
           <a>Esqueceu a senha?</a>
         </span>
       </Container>
