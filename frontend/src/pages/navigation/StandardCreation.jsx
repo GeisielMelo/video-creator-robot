@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import AddIcon from "@mui/icons-material/Add";
-import { processQuiz } from "../../utils/StandardCreatonUtils";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
+import { processQuiz } from "../../utils/StandardCreationUtils";
+import { createStandardTexts } from "../../services/api";
 
 const Section = styled.section`
   display: flex;
@@ -28,6 +31,9 @@ const Container = styled.div`
     padding: 10px;
     resize: none;
     font-family: ${(props) => props.theme.font.family.two};
+    &:disabled {
+      cursor: not-allowed;
+    }
   }
   button {
     height: 40px;
@@ -35,7 +41,7 @@ const Container = styled.div`
     background-color: #1abc9c;
     color: white;
     transition: all 0.2s ease-in-out;
-    margin-bottom: 10px;
+    margin: 10px 0px;
     cursor: pointer;
     &:hover {
       box-shadow: 0px 0px 5px #1abc9cb7;
@@ -44,7 +50,7 @@ const Container = styled.div`
     &:disabled {
       background-color: #f1f1f2;
       cursor: not-allowed;
-      box-shadow: none; 
+      box-shadow: none;
       color: #8ea1a8;
     }
   }
@@ -61,49 +67,67 @@ const ListContainer = styled.div`
     width: 100%;
     font-size: 12px;
   }
-  div {
-    height: 20px;
-    width: 20px;
-    border-radius: 50%;
-    background-color: ${(props) =>
-      props["data-stage"] === "added"
-        ? "#8ea1a8"
-        : props["data-stage"] === "processing"
-        ? "#f1c40f"
-        : props["data-stage"] === "done"
-        ? "#2ecc71"
-        : "#e74c3c"}
-  }
 `;
 
 const StandardCreation = () => {
   const [quizList, setQuizList] = useState([]);
   const [inputValue, setInputValue] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [operationFinished, setOperationFinished] = useState(false);
 
-  const handleSubmit = (quizInput) => {
+  const handleAddQuiz = (quizInput) => {
     try {
       const quizJSON = processQuiz(quizInput);
-      setQuizList((prevList) => [...prevList, { ...quizJSON, stage: "added" }]);
+      setQuizList((prevList) => [...prevList, quizJSON]);
       setInputValue("");
     } catch (error) {
       console.error(error.message);
     }
   };
 
+  const handleSubmit = async () => {
+    setIsProcessing(true);
+    try {
+      await createStandardTexts(quizList);
+      setOperationFinished(true);
+      console.log("Complete")
+    } catch (error) {
+      console.error(error.message);
+    } finally {
+      setIsProcessing(false);
+      console.log("stopping processing")
+    }
+  };
+
   return (
     <Section>
       <Container>
-        <textarea value={inputValue} onChange={(e) => setInputValue(e.target.value)} placeholder="Quiz" cols="30" rows="5"></textarea>
-        <button disabled={quizList.length >= 6} onClick={() => handleSubmit(inputValue)}>
+        <textarea
+          disabled={isProcessing || operationFinished}
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          placeholder="Quiz"
+          cols="30"
+          rows="5"
+        ></textarea>
+        <button disabled={quizList.length >= 6 || isProcessing || operationFinished} onClick={() => handleAddQuiz(inputValue)}>
           <AddIcon />
         </button>
 
         {quizList.map((quiz, index) => (
-          <ListContainer data-stage={quiz.stage} key={index}>
+          <ListContainer key={index}>
             <p>{quiz.question}</p>
-            <div />
+            {!isProcessing && !operationFinished && (
+              <RemoveCircleIcon color="error" fontSize="small" onClick={() => setQuizList(quizList.filter((_, i) => i !== index))} />
+            )}
           </ListContainer>
         ))}
+
+        {quizList.length != 0 && (
+          <button disabled={isProcessing || operationFinished} onClick={() => handleSubmit()}>
+            <PlayArrowIcon />
+          </button>
+        )}
       </Container>
     </Section>
   );

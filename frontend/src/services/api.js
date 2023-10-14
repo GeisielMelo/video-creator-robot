@@ -21,3 +21,14 @@ export const createSession = async (email, password) => {
 export const checkUserEmail = async (email) => {
   return api.get(`/sessions/${email}/`);
 };
+
+// Standard Creation
+export const createStandardTexts = async (array) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log(array);
+      resolve();
+    }, 3000);
+  });
+};
+
