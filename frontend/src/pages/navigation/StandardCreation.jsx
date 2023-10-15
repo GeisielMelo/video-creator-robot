@@ -4,7 +4,7 @@ import AddIcon from "@mui/icons-material/Add";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import { processQuiz } from "../../utils/StandardCreationUtils";
-import { createStandardTexts } from "../../services/api";
+import { createStandardTexts, downloadImage } from "../../services/api";
 
 const Section = styled.section`
   display: flex;
@@ -90,12 +90,12 @@ const StandardCreation = () => {
     try {
       await createStandardTexts(quizList);
       setOperationFinished(true);
-      console.log("Complete")
+      console.log("Complete");
     } catch (error) {
       console.error(error.message);
     } finally {
       setIsProcessing(false);
-      console.log("stopping processing")
+      console.log("stopping processing");
     }
   };
 
@@ -129,6 +129,13 @@ const StandardCreation = () => {
           </button>
         )}
       </Container>
+      <button
+        onClick={async () => {
+          await downloadImage(quizList);
+        }}
+      >
+        Download
+      </button>
     </Section>
   );
 };

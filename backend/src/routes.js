@@ -3,6 +3,7 @@ import auth from "./middlewares/auth";
 
 import UsersController from "./controllers/UsersController";
 import SessionsController from "./controllers/SessionsController";
+import FileController from "./controllers/FileController";
 
 const routes = new Router();
 
@@ -18,5 +19,8 @@ routes.use(auth);
 routes.put("/users/:id", UsersController.update);
 routes.delete("/users/:id", UsersController.delete);
 routes.get("/users/:id", UsersController.show);
+
+// Files
+routes.get("/files", FileController.downloadImage);
 
 export default routes;

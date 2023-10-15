@@ -32,3 +32,19 @@ export const createStandardTexts = async (array) => {
   });
 };
 
+export const downloadImage = async () => {
+  try {
+    const response = await api.get("/files/", { responseType: "blob" });
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "image.png");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+    console.log("Download bem-sucedido");
+  } catch (error) {
+    console.error("Erro ao baixar a imagem:", error);
+  }
+};
