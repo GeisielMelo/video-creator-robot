@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
+import { AuthContext } from "../../context/AuthContext";
+import _isEqual from "lodash/isEqual";
 import styled from "styled-components";
 import AddIcon from "@mui/icons-material/Add";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import { processQuiz } from "../../utils/StandardCreationUtils";
-import { createStandardTexts, downloadImage } from "../../services/api";
+import { createStandardTexts, downloadImage, indexQuestions, createQuestions } from "../../services/api";
 
 const Section = styled.section`
   display: flex;
@@ -70,14 +72,47 @@ const ListContainer = styled.div`
 `;
 
 const StandardCreation = () => {
+  const { user } = useContext(AuthContext);
+  const [userQuestions, setUserQuestions] = useState(null);
   const [quizList, setQuizList] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [operationFinished, setOperationFinished] = useState(false);
 
-  const handleAddQuiz = (quizInput) => {
+  useEffect(() => {
+    if (!userQuestions) {
+      const fetchData = async () => {
+        try {
+          const response = await indexQuestions(user.id);
+          setUserQuestions(response.data);
+        } catch (error) {
+          console.error("New user, there is no data.");
+          setUserQuestions([]);
+        }
+      };
+      fetchData();
+    }
+  }, [userQuestions]);
+
+  
+  const handleAddQuiz = async (quizInput) => {
     try {
+      // Filter input from text area using regEx.
       const quizJSON = processQuiz(quizInput);
+
+      // Checks if the question has been used before.
+      if (userQuestions.includes(quizJSON.question)) {
+        alert("Question already used.");
+        throw new Error("Question already used.");
+      }
+
+      // Checks if the quiz has already been added.
+      if (quizList.some((quiz) => _isEqual(quiz.question, quizJSON.question))) {
+        alert("Quiz already added.");
+        throw new Error("Quiz already added.");
+      }
+
+      // Adds the quiz to the quiz list.
       setQuizList((prevList) => [...prevList, quizJSON]);
       setInputValue("");
     } catch (error) {
@@ -87,8 +122,15 @@ const StandardCreation = () => {
 
   const handleSubmit = async () => {
     setIsProcessing(true);
+    let newQuestions = [];
+
+    quizList.forEach((quiz) => {
+      newQuestions.push(quiz.question);
+    });
+
     try {
       await createStandardTexts(quizList);
+      await createQuestions(user.id, newQuestions);
       setOperationFinished(true);
       console.log("Complete");
     } catch (error) {

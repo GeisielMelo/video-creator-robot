@@ -22,6 +22,17 @@ export const checkUserEmail = async (email) => {
   return api.get(`/sessions/${email}/`);
 };
 
+// Quiz Questions
+export const indexQuestions = async (userId) => {
+  return api.get(`/questions/${userId}`);
+};
+
+export const createQuestions = async (userId, questions) => {
+  return api.post("/questions/", { userId, questions });
+};
+
+// ===== Test ===== //
+
 // Standard Creation
 export const createStandardTexts = async (array) => {
   return new Promise((resolve) => {
