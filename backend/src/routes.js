@@ -23,6 +23,7 @@ routes.get("/users/:id", UsersController.show);
 
 // Files
 routes.get("/files", FileController.downloadImage);
+routes.post("/files", FileController.createQuiz);
 
 // Questions
 routes.post("/questions", QuizController.create);
