@@ -6,7 +6,7 @@ import AddIcon from "@mui/icons-material/Add";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import { processQuiz } from "../../utils/StandardCreationUtils";
-import { createStandardTexts, downloadImage, indexQuestions, createQuestions } from "../../services/api";
+import { createQuiz, downloadImage, indexQuestions, createQuestions } from "../../services/api";
 
 const Section = styled.section`
   display: flex;
@@ -86,7 +86,7 @@ const StandardCreation = () => {
           const response = await indexQuestions(user.id);
           setUserQuestions(response.data);
         } catch (error) {
-          console.error("New user, there is no data.");
+          console.error("No data found.");
           setUserQuestions([]);
         }
       };
@@ -94,7 +94,6 @@ const StandardCreation = () => {
     }
   }, [userQuestions]);
 
-  
   const handleAddQuiz = async (quizInput) => {
     try {
       // Filter input from text area using regEx.
@@ -129,8 +128,11 @@ const StandardCreation = () => {
     });
 
     try {
-      await createStandardTexts(quizList);
+      // Make the quiz components on the backend and return a download file.
+      await createQuiz(quizList);
+      // Create a record of the questions used.
       await createQuestions(user.id, newQuestions);
+      // Rest of the code.
       setOperationFinished(true);
       console.log("Complete");
     } catch (error) {

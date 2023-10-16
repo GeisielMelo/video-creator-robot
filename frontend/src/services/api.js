@@ -34,13 +34,8 @@ export const createQuestions = async (userId, questions) => {
 // ===== Test ===== //
 
 // Standard Creation
-export const createStandardTexts = async (array) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      console.log(array);
-      resolve();
-    }, 3000);
-  });
+export const createQuiz = async (questions) => {
+  return api.post("/files/", { questions });
 };
 
 export const downloadImage = async () => {
