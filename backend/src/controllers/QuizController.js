@@ -2,6 +2,7 @@ import Quiz from "../models/Quiz";
 import User from "../models/User";
 
 class QuizController {
+  // Fetch data from the quiz repository.
   async index(req, res) {
     try {
       const { userId } = req.params;
@@ -16,6 +17,7 @@ class QuizController {
     }
   }
 
+  // Create or update the quiz repository.
   async create(req, res) {
     try {
       const { userId, questions } = req.body;
