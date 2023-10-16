@@ -4,6 +4,7 @@ import auth from "./middlewares/auth";
 import UsersController from "./controllers/UsersController";
 import SessionsController from "./controllers/SessionsController";
 import FileController from "./controllers/FileController";
+import QuizController from "./controllers/QuizController";
 
 const routes = new Router();
 
@@ -22,5 +23,9 @@ routes.get("/users/:id", UsersController.show);
 
 // Files
 routes.get("/files", FileController.downloadImage);
+
+// Questions
+routes.post("/questions", QuizController.create);
+routes.get("/questions/:userId", QuizController.index);
 
 export default routes;
