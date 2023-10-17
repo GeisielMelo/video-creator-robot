@@ -2,15 +2,15 @@ const path = require("path");
 const gm = require("gm").subClass({ imageMagick: "7+" });
 const wrap = require('word-wrap');
 
-const inputFile = path.resolve(__dirname, "../templates/image.png");
-const outputFile = path.resolve(__dirname, "../templates/imageOut.png");
-const fontFamily = path.resolve(__dirname, "../templates/Poppins-Regular.ttf");
+// const inputFile = path.resolve(__dirname, "../templates/image.png");
+const outputFile = path.resolve(__dirname, "imagemComTexto.png");
+const fontFamily = path.resolve(__dirname, "../fonts/Poppins-Regular.ttf");
 
 const text = wrap('Sansão usou a mandíbula de um jumento para eliminar quantos homens?', { width: 30, cut: false });
 const textFontSize = 48;
 const color = "#2596be";
-const WIDTH = 850;  // Largura da região
-const HEIGHT = 250; // Altura da região
+const WIDTH = 925;  // Largura da região
+const HEIGHT = 285; // Altura da região
 
 // Calcula a largura do texto
 const textWidth = gm().fontSize(textFontSize).font(fontFamily).drawText(0, 0, text, 'Width').size().width;

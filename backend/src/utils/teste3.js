@@ -7,7 +7,7 @@ const outputFile = path.resolve(__dirname, "saida.png");
 
 gm(inputFile1)
   .composite(inputFile2)
-  .geometry(`+115+200`) // Centraliza com uma margem de 200px do topo
+  .geometry(`+77+340`) // Centraliza com uma margem de 200px do topo
   .write(outputFile, function (err) {
     if (!err) console.log('done');
   });
