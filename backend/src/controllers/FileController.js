@@ -1,4 +1,5 @@
 import path from "path";
+import { createCover } from "../utils/teste";
 
 class FileController {
   async downloadImage(req, res) {
@@ -13,9 +14,8 @@ class FileController {
   async createQuiz(req, res) {
     try {
       const { questions } = req.body;
-      console.log(questions);
-      
-
+      await createCover(questions[0].question);
+      return res.status(200).json({ message: "Imagens geradas com sucesso." });
     } catch (error) {
       return res.status(500).json({ error: "Falha ao gerar imagens do quiz." });
     }
