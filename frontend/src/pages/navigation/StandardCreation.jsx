@@ -129,7 +129,7 @@ const StandardCreation = () => {
 
     try {
       // Make the quiz components on the backend and return a download file.
-      await createQuiz(quizList);
+      await createQuiz(quizList, user.id);
       // Create a record of the questions used.
       await createQuestions(user.id, newQuestions);
       // Rest of the code.
@@ -175,7 +175,7 @@ const StandardCreation = () => {
       </Container>
       <button
         onClick={async () => {
-          await downloadImage(quizList);
+          await downloadImage(user?.id);
         }}
       >
         Download
