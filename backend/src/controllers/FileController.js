@@ -1,5 +1,5 @@
 import path from "path";
-import { createCover } from "../utils/teste";
+import { createQuizImages } from "../utils/quiz/textToImage";
 
 class FileController {
   async downloadImage(req, res) {
@@ -13,8 +13,16 @@ class FileController {
 
   async createQuiz(req, res) {
     try {
-      const { questions } = req.body;
-      await createCover(questions[0].question);
+      const { userId, questions } = req.body;
+
+      // Create Images.
+
+      await createQuizImages(questions, userId);
+
+      // Zip Images.
+
+      // Send Zip to User as response.
+
       return res.status(200).json({ message: "Imagens geradas com sucesso." });
     } catch (error) {
       return res.status(500).json({ error: "Falha ao gerar imagens do quiz." });
