@@ -1,0 +1,103 @@
+[
+    {
+      "question": "Qual dos planetas do sistema solar é conhecido como o Planeta Vermelho?",
+      "options": [
+        {
+          "label": "a",
+          "text": "Marte",
+          "correct": true
+        },
+        {
+          "label": "b",
+          "text": "Júpiter",
+          "correct": false
+        },
+        {
+          "label": "c",
+          "text": "Vênus",
+          "correct": false
+        },
+        {
+          "label": "d",
+          "text": "Saturno",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "question": "Qual é o maior osso do corpo humano?",
+      "options": [
+        {
+          "label": "a",
+          "text": "Fêmur",
+          "correct": true
+        },
+        {
+          "label": "b",
+          "text": "Tíbia",
+          "correct": false
+        },
+        {
+          "label": "c",
+          "text": "Fíbula",
+          "correct": false
+        },
+        {
+          "label": "d",
+          "text": "Úmero",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "question": "Qual é o elemento químico mais abundante na crosta terrestre?",
+      "options": [
+        {
+          "label": "a",
+          "text": "Oxigênio",
+          "correct": true
+        },
+        {
+          "label": "b",
+          "text": "Carbono",
+          "correct": false
+        },
+        {
+          "label": "c",
+          "text": "Silício",
+          "correct": false
+        },
+        {
+          "label": "d",
+          "text": "Ferro",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "question": "Qual é a maior cordilheira do mundo?",
+      "options": [
+        {
+          "label": "a",
+          "text": "Himalaias",
+          "correct": true
+        },
+        {
+          "label": "b",
+          "text": "Andes",
+          "correct": false
+        },
+        {
+          "label": "c",
+          "text": "Montanhas Rochosas",
+          "correct": false
+        },
+        {
+          "label": "d",
+          "text": "Alpes",
+          "correct": false
+        }
+      ]
+    }
+  ]
+  
