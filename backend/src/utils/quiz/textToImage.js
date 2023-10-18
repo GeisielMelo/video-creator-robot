@@ -6,7 +6,6 @@ const dataQuestions = require("./data.json");
 
 const fontFamily = path.resolve(__dirname, "../../fonts/Poppins-Bold.ttf");
 const background = path.resolve(__dirname, "../../templates/background.png");
-
 const question = path.resolve(__dirname, "tempQuestion.png");
 const alternatives = path.resolve(__dirname, "tempAlternatives.png");
 const answer = path.resolve(__dirname, "tempAnswer.png");
