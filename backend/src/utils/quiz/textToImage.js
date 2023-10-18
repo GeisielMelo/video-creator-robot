@@ -2,16 +2,14 @@ const path = require("path");
 const gm = require("gm").subClass({ imageMagick: "7+" });
 const wrap = require("word-wrap");
 const fs = require("fs").promises;
-const dataQuestions = require("./data.json");
-
+const { createFolder } = require("../folders");
 const fontFamily = path.resolve(__dirname, "../../fonts/Poppins-Bold.ttf");
-const background = path.resolve(__dirname, "../../templates/background.png");
-const question = path.resolve(__dirname, "tempQuestion.png");
-const alternatives = path.resolve(__dirname, "tempAlternatives.png");
-const answer = path.resolve(__dirname, "tempAnswer.png");
-const tempBackground = path.resolve(__dirname, "tempBackground.png");
 
-async function createTemporaryQuestion(text) {
+async function createTemporaryQuestion(text, userId) {
+  const outputFile = path.resolve(
+    __dirname,
+    `../../downloads/${userId}/tempQuestion.png`
+  );
   return new Promise((resolve, reject) => {
     const formattedText = wrap(text, {
       width: text.length > 85 ? 30 : 25,
@@ -29,7 +27,7 @@ async function createTemporaryQuestion(text) {
       .fontSize(textFontSize) // Font size.
       .font(fontFamily) // Font family
       .drawText(0, 0, formattedText) // Generate the text.
-      .write(question, function (err) {
+      .write(outputFile, function (err) {
         if (err) {
           reject(err);
           console.log("Temporary text question: Error.");
@@ -41,7 +39,11 @@ async function createTemporaryQuestion(text) {
   });
 }
 
-async function createTemporaryAlternatives(list) {
+async function createTemporaryAlternatives(list, userId) {
+  const outputFile = path.resolve(
+    __dirname,
+    `../../downloads/${userId}/tempAlternatives.png`
+  );
   return new Promise((resolve, reject) => {
     const formattedList = `A)${list[0].text} \nB)${list[1].text} \nC)${list[2].text} \nD)${list[3].text} `;
     const textFontSize = 88; // Define fontSize based on textLength.
@@ -56,7 +58,7 @@ async function createTemporaryAlternatives(list) {
       .fontSize(textFontSize) // Font size.
       .font(fontFamily) // Font family
       .drawText(0, 0, formattedList) // Generate the text.
-      .write(alternatives, function (err) {
+      .write(outputFile, function (err) {
         if (err) {
           reject(err);
           console.log("Temporary text alternative: Error.");
@@ -68,7 +70,11 @@ async function createTemporaryAlternatives(list) {
   });
 }
 
-async function createTemporaryAnswer(list) {
+async function createTemporaryAnswer(list, userId) {
+  const outputFile = path.resolve(
+    __dirname,
+    `../../downloads/${userId}/tempAnswer.png`
+  );
   return new Promise((resolve, reject) => {
     const correctAnswer = list.find((item) => item.correct === true);
     const formattedList = `${correctAnswer.label.toUpperCase()}) ${
@@ -86,7 +92,7 @@ async function createTemporaryAnswer(list) {
       .fontSize(textFontSize) // Font size.
       .font(fontFamily) // Font family
       .drawText(0, 0, formattedList) // Generate the text.
-      .write(answer, function (err) {
+      .write(outputFile, function (err) {
         if (err) {
           reject(err);
           console.log("Temporary text answer: Error.");
@@ -98,12 +104,24 @@ async function createTemporaryAnswer(list) {
   });
 }
 
-async function createQuestion() {
+async function createQuestion(userId) {
+  const inputBackgroundFile = path.resolve(
+    __dirname,
+    "../../templates/background.png"
+  );
+  const inputQuestionFile = path.resolve(
+    __dirname,
+    `../../downloads/${userId}/tempQuestion.png`
+  );
+  const outputFile = path.resolve(
+    __dirname,
+    `../../downloads/${userId}/tempBackground.png`
+  );
   return new Promise((resolve, reject) => {
-    gm(background)
-      .composite(question)
+    gm(inputBackgroundFile)
+      .composite(inputQuestionFile)
       .geometry(`+77+340`) // Centraliza com uma margem de 340px do topo
-      .write(tempBackground, function (err) {
+      .write(outputFile, function (err) {
         if (err) {
           reject(err);
           console.log("Temporary background creation: Error.");
@@ -115,16 +133,24 @@ async function createQuestion() {
   });
 }
 
-async function createAlternatives(index) {
-  const questionWithAlternatives = path.resolve(
+async function createAlternatives(index, userId) {
+  const outputFile = path.resolve(
     __dirname,
-    `questionWithAlternatives${index + 1}.png`
+    `../../downloads/${userId}/questionWithAlternatives${index + 1}.png`
+  );
+  const inputBackgroundFile = path.resolve(
+    __dirname,
+    `../../downloads/${userId}/tempBackground.png`
+  );
+  const inputFile = path.resolve(
+    __dirname,
+    `../../downloads/${userId}/tempAlternatives.png`
   );
   return new Promise((resolve, reject) => {
-    gm(tempBackground)
-      .composite(alternatives)
+    gm(inputBackgroundFile)
+      .composite(inputFile)
       .geometry(`+0+900`) // Centraliza com uma margem de 900px do topo
-      .write(questionWithAlternatives, function (err) {
+      .write(outputFile, function (err) {
         if (err) {
           reject(err);
           console.log("Creating question with alternatives: Error.");
@@ -136,16 +162,24 @@ async function createAlternatives(index) {
   });
 }
 
-async function createAnswer(index) {
-  const questionWithAnswer = path.resolve(
+async function createAnswer(index, userId) {
+  const inputFile = path.resolve(
     __dirname,
-    `questionWithAnswer${index + 1}.png`
+    `../../downloads/${userId}/tempAnswer.png`
+  );
+  const outputFile = path.resolve(
+    __dirname,
+    `../../downloads/${userId}/questionWithAnswer${index + 1}.png`
+  );
+  const inputBackgroundFile = path.resolve(
+    __dirname,
+    `../../downloads/${userId}/tempBackground.png`
   );
   return new Promise((resolve, reject) => {
-    gm(tempBackground)
-      .composite(answer)
+    gm(inputBackgroundFile)
+      .composite(inputFile)
       .geometry(`+0+900`) // Centraliza com uma margem de 200px do topo
-      .write(questionWithAnswer, function (err) {
+      .write(outputFile, function (err) {
         if (err) {
           reject(err);
           console.log("Creating question with answer: Error.");
@@ -157,34 +191,55 @@ async function createAnswer(index) {
   });
 }
 
-async function processQuestion(pergunta, questoes, index) {
+// Process a single quest
+async function processQuestion(pergunta, questoes, index, userId) {
   try {
-    await createTemporaryQuestion(pergunta);
-    await createQuestion();
-    await createTemporaryAlternatives(questoes);
-    await createAlternatives(index);
-    await createTemporaryAnswer(questoes);
-    await createAnswer(index);
+    // Create quiz components
+    await createTemporaryQuestion(pergunta, userId);
+    await createQuestion(userId);
+    await createTemporaryAlternatives(questoes, userId);
+    await createAlternatives(index, userId);
+    await createTemporaryAnswer(questoes, userId);
+    await createAnswer(index, userId);
 
-    await fs.unlink(question);
-    await fs.unlink(alternatives);
-    await fs.unlink(answer);
-    await fs.unlink(tempBackground);
+    // Delete temporary question.
+    await fs.unlink(
+      path.resolve(__dirname, `../../downloads/${userId}/tempQuestion.png`)
+    );
+    // Delete temporary alternatives.
+    await fs.unlink(
+      path.resolve(__dirname, `../../downloads/${userId}/tempAlternatives.png`)
+    );
+    // Delete temporary answer.
+    await fs.unlink(
+      path.resolve(__dirname, `../../downloads/${userId}/tempAnswer.png`)
+    );
+    // Delete temporary background.
+    await fs.unlink(
+      path.resolve(__dirname, `../../downloads/${userId}/tempBackground.png`)
+    );
+
     console.log("Temporary pngs deleted successfully.");
   } catch (error) {
     console.error("Error deleting temporary png:", error);
   }
 }
 
-async function processQuestions(index) {
-  const element = dataQuestions[index];
-  await processQuestion(element.question, element.options, index);
+// Create a queue to process the questions.
+async function processQuestions(index, array, userId) {
+  const element = array[index];
+  await processQuestion(element.question, element.options, index, userId);
 }
 
-async function createQuiz() {
-  for (let i = 0; i < dataQuestions.length; i++) {
-    await processQuestions(i);
+// Create a quiz
+async function createQuizImages(array, userId) {
+  console.log('\x1b[34m ###### Iniciando criação de imagens. ######\x1b[0m');
+  createFolder(`../downloads/${userId}`);
+
+  for (let i = 0; i < array.length; i++) {
+    await processQuestions(i, array, userId);
   }
+  console.log('\x1b[34m ###### Imagens geradas com sucesso. ######\x1b[0m');
 }
 
-createQuiz();
+module.exports = { createQuizImages };
