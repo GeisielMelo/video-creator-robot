@@ -5,6 +5,8 @@ import styled from "styled-components";
 import AddIcon from "@mui/icons-material/Add";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
+import DownloadIcon from "@mui/icons-material/Download";
+import { Loading } from "../../components/Loading";
 import { processQuiz } from "../../utils/StandardCreationUtils";
 import { createQuiz, downloadImage, indexQuestions, createQuestions } from "../../services/api";
 
@@ -38,6 +40,9 @@ const Container = styled.div`
     }
   }
   button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     height: 40px;
     border-radius: 6px;
     background-color: #1abc9c;
@@ -78,6 +83,7 @@ const StandardCreation = () => {
   const [inputValue, setInputValue] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [operationFinished, setOperationFinished] = useState(false);
+  const [enableDownload, setEnableDownload] = useState(false);
 
   useEffect(() => {
     if (!userQuestions) {
@@ -134,6 +140,7 @@ const StandardCreation = () => {
       await createQuestions(user.id, newQuestions);
       // Rest of the code.
       setOperationFinished(true);
+      setEnableDownload(true);
       console.log("Complete");
     } catch (error) {
       console.error(error.message);
@@ -169,17 +176,19 @@ const StandardCreation = () => {
 
         {quizList.length != 0 && (
           <button disabled={isProcessing || operationFinished} onClick={() => handleSubmit()}>
-            <PlayArrowIcon />
+            {isProcessing ? <Loading /> : <PlayArrowIcon />}
+          </button>
+        )}
+        {enableDownload && (
+          <button
+            onClick={async () => {
+              await downloadImage(user?.id);
+            }}
+          >
+            <DownloadIcon />
           </button>
         )}
       </Container>
-      <button
-        onClick={async () => {
-          await downloadImage(user?.id);
-        }}
-      >
-        Download
-      </button>
     </Section>
   );
 };
