@@ -22,7 +22,7 @@ routes.delete("/users/:id", UsersController.delete);
 routes.get("/users/:id", UsersController.show);
 
 // Files
-routes.get("/files", FileController.downloadImage);
+routes.get("/files/:userId", FileController.downloadFile);
 routes.post("/files", FileController.createQuiz);
 
 // Questions

@@ -34,17 +34,17 @@ export const createQuestions = async (userId, questions) => {
 // ===== Test ===== //
 
 // Standard Creation
-export const createQuiz = async (questions) => {
-  return api.post("/files/", { questions });
+export const createQuiz = async (questions, userId) => {
+  return api.post("/files/", { questions, userId });
 };
 
-export const downloadImage = async () => {
+export const downloadImage = async (userId) => {
   try {
-    const response = await api.get("/files/", { responseType: "blob" });
+    const response = await api.get(`/files/${userId}`, { responseType: "blob" });
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement("a");
     link.href = url;
-    link.setAttribute("download", "image.png");
+    link.setAttribute("download", "file.zip");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
