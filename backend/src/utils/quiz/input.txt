@@ -1,2 +1,2 @@
-file 'E:\Node\ffmpeg\src\downloads\userid1\sound1.mp3'
-file 'E:\Node\ffmpeg\src\downloads\userid1\sound2.mp3'
+file 'D:\Users\Jessika\Documents\GitHub\Quiz\backend\src\utils\quiz\sound1.mp3'
+file 'D:\Users\Jessika\Documents\GitHub\Quiz\backend\src\utils\quiz\sound2.mp3'

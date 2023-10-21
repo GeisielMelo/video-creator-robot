@@ -13,4 +13,5 @@ async function main(command) {
 }
 
 
-main(`ffmpeg -f concat -i ${input} -c copy bcde-afirmacoes_positivas.mp3`)
+main(`ffmpeg -f concat -safe 0 -i ${input} -c copy output.wav`)
+//https://trac.ffmpeg.org/wiki/Concatenate
