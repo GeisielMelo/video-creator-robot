@@ -23,6 +23,7 @@ async function main(userId) {
     );
 
     const ffmpegCommand = await createFfmpegCommand(updatedFiles, backgroundVideo);
+    console.log(ffmpegCommand);
     const concatenate = await concatenateImages(ffmpegCommand);
   } catch (error) {
     console.error("Erro:", error);
