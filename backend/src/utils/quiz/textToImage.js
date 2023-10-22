@@ -5,11 +5,9 @@ const fs = require("fs").promises;
 const { createFolder } = require("../folders");
 const fontFamily = path.resolve(__dirname, "../../fonts/Poppins-Bold.ttf");
 
+//
 async function createTemporaryQuestion(text, userId) {
-  const outputFile = path.resolve(
-    __dirname,
-    `../../downloads/${userId}/tempQuestion.png`
-  );
+  const outputFile = path.resolve(__dirname, `../../downloads/${userId}/tempQuestion.png`);
   return new Promise((resolve, reject) => {
     const formattedText = wrap(text, {
       width: text.length > 85 ? 30 : 25,
@@ -38,12 +36,9 @@ async function createTemporaryQuestion(text, userId) {
       });
   });
 }
-
+//
 async function createTemporaryAlternatives(list, userId) {
-  const outputFile = path.resolve(
-    __dirname,
-    `../../downloads/${userId}/tempAlternatives.png`
-  );
+  const outputFile = path.resolve(__dirname, `../../downloads/${userId}/tempAlternatives.png`);
   return new Promise((resolve, reject) => {
     const formattedList = `A)${list[0].text} \nB)${list[1].text} \nC)${list[2].text} \nD)${list[3].text} `;
     const textFontSize = 88; // Define fontSize based on textLength.
@@ -69,17 +64,12 @@ async function createTemporaryAlternatives(list, userId) {
       });
   });
 }
-
+//
 async function createTemporaryAnswer(list, userId) {
-  const outputFile = path.resolve(
-    __dirname,
-    `../../downloads/${userId}/tempAnswer.png`
-  );
+  const outputFile = path.resolve(__dirname, `../../downloads/${userId}/tempAnswer.png`);
   return new Promise((resolve, reject) => {
     const correctAnswer = list.find((item) => item.correct === true);
-    const formattedList = `${correctAnswer.label.toUpperCase()}) ${
-      correctAnswer.text
-    }`;
+    const formattedList = `${correctAnswer.label.toUpperCase()}) ${correctAnswer.text}`;
     const textFontSize = 88; // Define fontSize based on textLength.
     const WIDTH = 1080; // Width of the image in pixels.
     const HEIGHT = 500; // Height of the image in pixels.
@@ -103,20 +93,11 @@ async function createTemporaryAnswer(list, userId) {
       });
   });
 }
-
+//
 async function createQuestion(userId) {
-  const inputBackgroundFile = path.resolve(
-    __dirname,
-    "../../templates/background.png"
-  );
-  const inputQuestionFile = path.resolve(
-    __dirname,
-    `../../downloads/${userId}/tempQuestion.png`
-  );
-  const outputFile = path.resolve(
-    __dirname,
-    `../../downloads/${userId}/tempBackground.png`
-  );
+  const inputBackgroundFile = path.resolve(__dirname, "../../templates/background.png");
+  const inputQuestionFile = path.resolve(__dirname, `../../downloads/${userId}/tempQuestion.png`);
+  const outputFile = path.resolve(__dirname, `../../downloads/${userId}/tempBackground.png`);
   return new Promise((resolve, reject) => {
     gm(inputBackgroundFile)
       .composite(inputQuestionFile)
@@ -132,20 +113,11 @@ async function createQuestion(userId) {
       });
   });
 }
-
+//
 async function createAlternatives(index, userId) {
-  const outputFile = path.resolve(
-    __dirname,
-    `../../downloads/${userId}/questionWithAlternatives${index + 1}.png`
-  );
-  const inputBackgroundFile = path.resolve(
-    __dirname,
-    `../../downloads/${userId}/tempBackground.png`
-  );
-  const inputFile = path.resolve(
-    __dirname,
-    `../../downloads/${userId}/tempAlternatives.png`
-  );
+  const outputFile = path.resolve(__dirname, `../../downloads/${userId}/questionWithAlternatives${index + 1}.png`);
+  const inputBackgroundFile = path.resolve(__dirname, `../../downloads/${userId}/tempBackground.png`);
+  const inputFile = path.resolve(__dirname, `../../downloads/${userId}/tempAlternatives.png`);
   return new Promise((resolve, reject) => {
     gm(inputBackgroundFile)
       .composite(inputFile)
@@ -163,18 +135,9 @@ async function createAlternatives(index, userId) {
 }
 
 async function createAnswer(index, userId) {
-  const inputFile = path.resolve(
-    __dirname,
-    `../../downloads/${userId}/tempAnswer.png`
-  );
-  const outputFile = path.resolve(
-    __dirname,
-    `../../downloads/${userId}/questionWithAnswer${index + 1}.png`
-  );
-  const inputBackgroundFile = path.resolve(
-    __dirname,
-    `../../downloads/${userId}/tempBackground.png`
-  );
+  const inputFile = path.resolve(__dirname, `../../downloads/${userId}/tempAnswer.png`);
+  const outputFile = path.resolve(__dirname, `../../downloads/${userId}/questionWithAnswer${index + 1}.png`);
+  const inputBackgroundFile = path.resolve(__dirname, `../../downloads/${userId}/tempBackground.png`);
   return new Promise((resolve, reject) => {
     gm(inputBackgroundFile)
       .composite(inputFile)
@@ -192,32 +155,24 @@ async function createAnswer(index, userId) {
 }
 
 // Process a single quest
-async function processQuestion(pergunta, questoes, index, userId) {
+async function processQuestion(question, options, index, userId) {
   try {
     // Create quiz components
-    await createTemporaryQuestion(pergunta, userId);
+    await createTemporaryQuestion(question, userId);
     await createQuestion(userId);
-    await createTemporaryAlternatives(questoes, userId);
+    await createTemporaryAlternatives(options, userId);
     await createAlternatives(index, userId);
-    await createTemporaryAnswer(questoes, userId);
+    await createTemporaryAnswer(options, userId);
     await createAnswer(index, userId);
 
     // Delete temporary question.
-    await fs.unlink(
-      path.resolve(__dirname, `../../downloads/${userId}/tempQuestion.png`)
-    );
+    await fs.unlink(path.resolve(__dirname, `../../downloads/${userId}/tempQuestion.png`));
     // Delete temporary alternatives.
-    await fs.unlink(
-      path.resolve(__dirname, `../../downloads/${userId}/tempAlternatives.png`)
-    );
+    await fs.unlink(path.resolve(__dirname, `../../downloads/${userId}/tempAlternatives.png`));
     // Delete temporary answer.
-    await fs.unlink(
-      path.resolve(__dirname, `../../downloads/${userId}/tempAnswer.png`)
-    );
+    await fs.unlink(path.resolve(__dirname, `../../downloads/${userId}/tempAnswer.png`));
     // Delete temporary background.
-    await fs.unlink(
-      path.resolve(__dirname, `../../downloads/${userId}/tempBackground.png`)
-    );
+    await fs.unlink(path.resolve(__dirname, `../../downloads/${userId}/tempBackground.png`));
 
     console.log("Temporary pngs deleted successfully.");
   } catch (error) {
@@ -226,20 +181,18 @@ async function processQuestion(pergunta, questoes, index, userId) {
 }
 
 // Create a queue to process the questions.
-async function processQuestions(index, array, userId) {
-  const element = array[index];
+async function processQuestions(index, jsonArray, userId) {
+  const element = jsonArray[index];
   await processQuestion(element.question, element.options, index, userId);
 }
 
 // Create a quiz
-async function createQuizImages(array, userId) {
-  console.log('\x1b[34m ###### Iniciando criação de imagens. ######\x1b[0m');
+async function createQuizImages(jsonArray, userId) {
   createFolder(`../downloads/${userId}`);
 
-  for (let i = 0; i < array.length; i++) {
-    await processQuestions(i, array, userId);
+  for (let i = 0; i < jsonArray.length; i++) {
+    await processQuestions(i, jsonArray, userId);
   }
-  console.log('\x1b[34m ###### Imagens geradas com sucesso. ######\x1b[0m');
 }
 
 module.exports = { createQuizImages };
