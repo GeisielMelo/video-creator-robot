@@ -7,13 +7,13 @@ class TextToImagesCreator {
   constructor(jsonArray, userId) {
     this.jsonArray = jsonArray;
     this.userId = userId;
-    this.userFolder = path.resolve(__dirname, `../../downloads/${userId}`);
-    this.this.fontFamily = path.resolve(__dirname, "../../fonts/Poppins-Bold.ttf");
-    this.tempQuestion = path.resolve(__dirname, `../../downloads/${userId}/tempQuestion.png`);
-    this.tempAlternatives = path.resolve(__dirname, `../../downloads/${userId}/tempAlternatives.png`);
-    this.tempAnswer = path.resolve(__dirname, `../../downloads/${userId}/tempAnswer.png`);
-    this.tempBackground = path.resolve(__dirname, `../../downloads/${userId}/tempBackground.png`);
-    this.background = path.resolve(__dirname, "../../templates/background.png");
+    this.userFolder = path.resolve(__dirname, `../downloads/${userId}`);
+    this.fontFamily = path.resolve(__dirname, "../fonts/Poppins-Bold.ttf");
+    this.tempQuestion = path.resolve(__dirname, `../downloads/${userId}/tempQuestion.png`);
+    this.tempAlternatives = path.resolve(__dirname, `../downloads/${userId}/tempAlternatives.png`);
+    this.tempAnswer = path.resolve(__dirname, `../downloads/${userId}/tempAnswer.png`);
+    this.tempBackground = path.resolve(__dirname, `../downloads/${userId}/tempBackground.png`);
+    this.background = path.resolve(__dirname, "../templates/background.png");
   }
 
   async _createTemporaryQuestion(text) {
@@ -119,7 +119,7 @@ class TextToImagesCreator {
   }
 
   async _createAlternatives(index) {
-    const outputFile = path.resolve(__dirname, `../../downloads/${this.userId}/questionWithAlternatives${index + 1}.png`);
+    const outputFile = path.resolve(__dirname, `../downloads/${this.userId}/questionWithAlternatives${index + 1}.png`);
     return new Promise((resolve, reject) => {
       gm(this.tempBackground)
         .composite(this.tempAlternatives)
@@ -137,7 +137,7 @@ class TextToImagesCreator {
   }
 
   async _createAnswer(index) {
-    const outputFile = path.resolve(__dirname, `../../downloads/${this.userId}/questionWithAnswer${index + 1}.png`);
+    const outputFile = path.resolve(__dirname, `../downloads/${this.userId}/questionWithAnswer${index + 1}.png`);
     return new Promise((resolve, reject) => {
       gm(this.tempBackground)
         .composite(this.tempAnswer)
@@ -192,7 +192,7 @@ class TextToImagesCreator {
     }
   }
 
-  async createQuizImages() {
+  async render() {
     try {
       await this._createFolder(`../downloads/${this.userId}`);
 
