@@ -1,7 +1,10 @@
 import path from "path";
-import { createQuizImages } from "../utils/quiz/textToImage";
-import { zipFiles } from "../utils/createZip.js";
-import { deletePNGFiles } from "../utils/folders";
+import TextToImagesCreator from "../modules/TextToImagesCreator"
+//import VideoConcatenator from "../modules/VideoConcatenator"
+//import TextToSpeechCreator from "../modules/TextToSpeechCreator"
+//import AudioConcatenator  from "../modules/AudioConcatenator"
+
+
 class FileController {
   async downloadFile(req, res) {
     try {
@@ -13,23 +16,25 @@ class FileController {
     }
   }
 
-  // Generate the quiz images.
   async createQuiz(req, res) {
+    // CRIAR METODO PARA DELETAR ARQUIVOS ANTERIORES.
     try {
       const { userId, questions } = req.body;
+      // Creating instances.
+      const textToImagesCreator = new TextToImagesCreator(questions, userId);
+      //const VideoConcatenator = new VideoConcatenator(userId);
+      //const TextToSpeechCreator = new TextToSpeechCreator();
+      //const AudioConcatenator = new AudioConcatenator();
 
-      // Create Images.
-      await createQuizImages(questions, userId);
+      await textToImagesCreator.render();
+      //await VideoConcatenator.concatenate();
+      //await TextToSpeechCreator.create();
+      //await AudioConcatenator.concatenate();
 
-      // Zip Images.
-      await zipFiles(`../downloads/${userId}`, "file");
-
-      // Delete PNG Files.
-      await deletePNGFiles(`../downloads/${userId}`);
 
       return res.status(200).json({ message: "Imagens geradas com sucesso." });
     } catch (error) {
-      return res.status(500).json({ error: "Falha ao gerar imagens do quiz." });
+      return res.status(500).json({ error: "Falha ao gerar imagens do quiz.", error});
     }
   }
 }
