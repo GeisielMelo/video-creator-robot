@@ -1,9 +1,8 @@
 import path from "path";
-import TextToImagesCreator from "../modules/TextToImagesCreator"
-//import VideoConcatenator from "../modules/VideoConcatenator"
+import TextToImagesCreator from "../modules/TextToImagesCreator";
+import VideoConcatenator from "../modules/VideoConcatenator";
 //import TextToSpeechCreator from "../modules/TextToSpeechCreator"
 //import AudioConcatenator  from "../modules/AudioConcatenator"
-
 
 class FileController {
   async downloadFile(req, res) {
@@ -22,19 +21,18 @@ class FileController {
       const { userId, questions } = req.body;
       // Creating instances.
       const textToImagesCreator = new TextToImagesCreator(questions, userId);
-      //const VideoConcatenator = new VideoConcatenator(userId);
-      //const TextToSpeechCreator = new TextToSpeechCreator();
-      //const AudioConcatenator = new AudioConcatenator();
+      const videoConcatenator = new VideoConcatenator(userId);
+      //const textToSpeechCreator = new TextToSpeechCreator();
+      //const audioConcatenator = new AudioConcatenator();
 
       await textToImagesCreator.render();
-      //await VideoConcatenator.concatenate();
-      //await TextToSpeechCreator.create();
-      //await AudioConcatenator.concatenate();
-
+      await videoConcatenator.render();
+      //await textToSpeechCreator.create();
+      //await audioConcatenator.concatenate();
 
       return res.status(200).json({ message: "Imagens geradas com sucesso." });
     } catch (error) {
-      return res.status(500).json({ error: "Falha ao gerar imagens do quiz.", error});
+      return res.status(500).json({ error: "Falha ao gerar imagens do quiz.", error });
     }
   }
 }
