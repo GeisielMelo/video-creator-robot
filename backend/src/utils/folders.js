@@ -1,28 +1,23 @@
-const fs = require("fs").promises;
+const fs = require("fs");
 const path = require("path");
 
-function createFolder(folderPath) {
-  let outputFolderPath = path.resolve(__dirname, folderPath);
-  if (!fs.existsSync(outputFolderPath)) {
-    fs.mkdirSync(outputFolderPath, { recursive: true });
-  }
-}
-
-async function deletePNGFiles(folderPath) {
+async function fetchAudioQuestionsPath(userId) {
   try {
-    const fullFolderPath = path.resolve(__dirname, folderPath);
-    fs.readdirSync(fullFolderPath).forEach((file) => {
-      const filePath = path.join(fullFolderPath, file);
+    const questionsArray = [];
+    const files = await fs.promises.readdir(path.resolve(__dirname, `../downloads/${userId}`));
+
+    files.forEach((file) => {
+      const filePath = path.join(path.resolve(__dirname, `../downloads/${userId}`), file);
       const fileExtension = path.extname(filePath);
 
-      if (fileExtension === ".png") {
-        fs.unlinkSync(filePath);
-        console.log(`Deleted: ${filePath}`);
+      if (fileExtension === ".mp3") {
+        questionsArray.push(filePath);
       }
     });
+    return questionsArray;
   } catch (error) {
-    console.error(error);
+    throw error;
   }
 }
 
-module.exports = { createFolder, deletePNGFiles };
+module.exports = { fetchAudioQuestionsPath };
