@@ -3,7 +3,7 @@ const path = require("path");
 const ffmpeg = require("fluent-ffmpeg");
 const { exec } = require("child_process");
 
-class VideoConcatenator {
+class ImageToVideoCreator {
   constructor(userId) {
     this.userId = userId;
     this.countdownTime = 6;
@@ -134,11 +134,11 @@ class VideoConcatenator {
       );
       const ffmpegCommand = await this._createFfmpegCommand(updatedFiles, this.backgroundFile);
       console.log(ffmpegCommand);
-      await this._executeCommand(ffmpegCommand);
+      //await this._executeCommand(ffmpegCommand);
     } catch (error) {
       console.error(error);
     }
   }
 }
 
-module.exports = VideoConcatenator;
+module.exports = ImageToVideoCreator;
