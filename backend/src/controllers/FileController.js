@@ -1,8 +1,10 @@
 import path from "path";
+import { fetchAudioQuestionsPath } from "../utils/folders";
 import TextToImagesCreator from "../modules/TextToImagesCreator";
-import VideoConcatenator from "../modules/VideoConcatenator";
+import ImageToVideoCreator from "../modules/ImageToVideoCreator";
+import AudioConcatenator from "../modules/AudioConcatenator";
+
 //import TextToSpeechCreator from "../modules/TextToSpeechCreator"
-//import AudioConcatenator  from "../modules/AudioConcatenator"
 
 class FileController {
   async downloadFile(req, res) {
@@ -16,18 +18,20 @@ class FileController {
   }
 
   async createQuiz(req, res) {
-    // CRIAR METODO PARA DELETAR ARQUIVOS ANTERIORES.
+    // CRIAR MÉTODO PARA DELETAR ARQUIVOS ANTERIORES.
+    // REMOVER CRIAÇÃO DE PASTAS DE TEXT TO IMAGES E ADICIONAR EM FOLDERS.
     try {
       const { userId, questions } = req.body;
-      // Creating instances.
-      const textToImagesCreator = new TextToImagesCreator(questions, userId);
-      const videoConcatenator = new VideoConcatenator(userId);
-      //const textToSpeechCreator = new TextToSpeechCreator();
-      //const audioConcatenator = new AudioConcatenator();
 
-      await textToImagesCreator.render();
-      await videoConcatenator.render();
-      //await textToSpeechCreator.create();
+      // OK
+      //const textToImagesCreator = new TextToImagesCreator(questions, userId);
+      //await textToImagesCreator.render();
+
+      const imageToVideoCreator = new ImageToVideoCreator(userId);
+      await imageToVideoCreator.render();
+
+      // OK
+      //const audioConcatenator = new AudioConcatenator(await fetchAudioQuestionsPath(userId), userId);
       //await audioConcatenator.concatenate();
 
       return res.status(200).json({ message: "Imagens geradas com sucesso." });
