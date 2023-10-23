@@ -1,4 +1,4 @@
-const fs = require("fs").promises;
+const fs = require("fs");
 const path = require("path");
 const ffmpeg = require("fluent-ffmpeg");
 const { exec } = require("child_process");
@@ -6,59 +6,45 @@ const { exec } = require("child_process");
 class ImageToVideoCreator {
   constructor(userId) {
     this.userId = userId;
-    this.countdownTime = 6;
     this.userFolder = path.resolve(__dirname, `../downloads/${userId}`);
     this.outputVideo = path.resolve(__dirname, `../downloads/${userId}/out.mp4`);
     this.backgroundFile = path.resolve(__dirname, "../templates/background.mp4");
+    this.countdownFile = path.resolve(__dirname, "../templates/countdown.wav");
   }
 
-  async _listOrganizedFilesInFolder() {
+  async _fetchQuizData() {
     try {
-      const stats = await fs.stat(this.userFolder);
+      let questionWithAlternatives = [];
+      let questionWithAnswer = [];
+      let questionAudio = [];
+      const files = await fs.promises.readdir(path.resolve(__dirname, `../downloads/${this.userId}`));
 
-      if (!stats.isDirectory()) {
-        throw new Error("Not a directory!");
-      }
+      files.forEach((file) => {
+        const filePath = path.join(path.resolve(__dirname, `../downloads/${this.userId}`), file);
+        const fileExt = path.extname(filePath);
 
-      const files = await fs.readdir(this.userFolder);
+        if (file.includes("questionWithAlternatives")) {
+          questionWithAlternatives.push(filePath);
+        }
 
-      const organizedFiles = files.reduce((result, file) => {
-        const filePath = path.resolve(this.userFolder, file);
-        const fileName = path.basename(file);
-        const fileExtension = path.extname(file);
-        const match = fileName.match(/^(\w+)(\d+)\.(mp3|png)$/);
+        if (file.includes("questionWithAnswer")) {
+          questionWithAnswer.push(filePath);
+        }
 
-        if (match) {
-          const [, fileType, fileNumber, fileFormat] = match;
-
-          if (!result[fileNumber]) {
-            result[fileNumber] = {};
+        if (fileExt === ".mp3" || fileExt === ".wav") {
+          if (file.includes("question")) {
+            questionAudio.push(filePath);
           }
-
-          result[fileNumber][`${fileType}.${fileFormat}`] = filePath;
         }
+      });
 
-        return result;
-      }, {});
-
-      const filteredFiles = Object.entries(organizedFiles).reduce((result, [key, value]) => {
-        if (value["question.mp3"] && value["questionWithAlternatives.png"] && value["questionWithAnswer.png"]) {
-          result.push({
-            "question.mp3": value["question.mp3"],
-            "questionWithAlternatives.png": value["questionWithAlternatives.png"],
-            "questionWithAnswer.png": value["questionWithAnswer.png"],
-          });
-        }
-        return result;
-      }, []);
-
-      return filteredFiles;
+      return [questionWithAlternatives, questionWithAnswer, questionAudio];
     } catch (error) {
-      throw new Error(`Error listing files in folder: ${error.message}`);
+      console.error(error);
     }
   }
 
-  async _defineQuestionLength(filePath) {
+  async _fetchAudioLength(filePath) {
     return new Promise((resolve, reject) => {
       ffmpeg.ffprobe(filePath, (err, metadata) => {
         if (err) {
@@ -71,21 +57,37 @@ class ImageToVideoCreator {
     });
   }
 
-  async _createFfmpegCommand(array, background) {
+  async _sortedListsWithAudioLength(questionWithAlternatives, questionWithAnswer, questionAudio) {
+    const zippedLists = [];
+
+    for (let i = 0; i < questionWithAlternatives.length; i++) {
+      zippedLists.push({
+        questionWithAlternatives: questionWithAlternatives[i],
+        questionWithAnswer: questionWithAnswer[i],
+        questionLength: await this._fetchAudioLength(questionAudio[i]),
+      });
+    }
+
+    return zippedLists;
+  }
+
+  async _createFfmpegCommand(shortedData) {
     return new Promise(async (resolve, reject) => {
       try {
-        const commands = [];
+        let commands = [];
+        let filters = [];
+        let countdownLength = await this._fetchAudioLength(this.countdownFile);
 
-        array.forEach((element) => {
-          let questionImage = element["questionWithAlternatives.png"];
-          let answerImage = element["questionWithAnswer.png"];
-          let questionLength = element.questionLength;
+        shortedData.forEach((element) => {
+          let questionImage = element.questionWithAlternatives;
+          let answerImage = element.questionWithAnswer;
+          let questionLength = element.questionLength + countdownLength;
 
           const command = `-loop 1 -t ${questionLength} -i ${questionImage} -loop 1 -t 1 -i ${answerImage}`;
           commands.push(command);
         });
 
-        const ffmpegCommand = `ffmpeg -i ${background} ${commands.join(
+        const ffmpegCommand = `ffmpeg -i ${this.backgroundFile} ${commands.join(
           " "
         )} -filter_complex "[1:v][2:v]concat=n=2:v=1:a=0[v1];[3:v][4:v]concat=n=2:v=1:a=0[v2];[5:v][6:v]concat=n=2:v=1:a=0[v3];[7:v][8:v]concat=n=2:v=1:a=0[v4];[9:v][10:v]concat=n=2:v=1:a=0[v5];[11:v][12:v]concat=n=2:v=1:a=0[v6];[v1][v2]concat=n=2:v=1:a=0[v7];[v3][v4]concat=n=2:v=1:a=0[v8];[v5][v6]concat=n=2:v=1:a=0[v9];[v7][v8]concat=n=2:v=1:a=0[v10];[v9][v10]concat=n=2:v=1:a=0[v11];[0:v][v11]overlay=shortest=1[v12]" -map "[v12]" -map 0:a -c:a copy ${
           this.outputVideo
@@ -122,22 +124,11 @@ class ImageToVideoCreator {
   }
 
   async render() {
-    try {
-      const files = await this._listOrganizedFilesInFolder();
-      const updatedFiles = await Promise.all(
-        files.map(async (element) => {
-          let questionPath = element["question.mp3"];
-          const questionLength = await this._defineQuestionLength(questionPath);
-          element["questionLength"] = questionLength + this.countdownTime;
-          return element;
-        })
-      );
-      const ffmpegCommand = await this._createFfmpegCommand(updatedFiles, this.backgroundFile);
-      console.log(ffmpegCommand);
-      //await this._executeCommand(ffmpegCommand);
-    } catch (error) {
-      console.error(error);
-    }
+    const data = await this._fetchQuizData();
+    const shortedData = await this._sortedListsWithAudioLength(...data);
+    const ffmpegCommand = await this._createFfmpegCommand(shortedData);
+    console.log(ffmpegCommand);
+    //await this._executeCommand(ffmpegCommand);
   }
 }
 
