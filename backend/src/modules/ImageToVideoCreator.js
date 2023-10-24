@@ -75,7 +75,7 @@ class ImageToVideoCreator {
     return new Promise(async (resolve, reject) => {
       try {
         let commands = [];
-        let filters = [];
+        let filterComplex = [];
         let countdownLength = await this._fetchAudioLength(this.countdownFile);
 
         shortedData.forEach((element) => {
@@ -87,12 +87,28 @@ class ImageToVideoCreator {
           commands.push(command);
         });
 
-        const ffmpegCommand = `ffmpeg -i ${this.backgroundFile} ${commands.join(
-          " "
-        )} -filter_complex "[1:v][2:v]concat=n=2:v=1:a=0[v1];[3:v][4:v]concat=n=2:v=1:a=0[v2];[5:v][6:v]concat=n=2:v=1:a=0[v3];[7:v][8:v]concat=n=2:v=1:a=0[v4];[9:v][10:v]concat=n=2:v=1:a=0[v5];[11:v][12:v]concat=n=2:v=1:a=0[v6];[v1][v2]concat=n=2:v=1:a=0[v7];[v3][v4]concat=n=2:v=1:a=0[v8];[v5][v6]concat=n=2:v=1:a=0[v9];[v7][v8]concat=n=2:v=1:a=0[v10];[v9][v10]concat=n=2:v=1:a=0[v11];[0:v][v11]overlay=shortest=1[v12]" -map "[v12]" -map 0:a -c:a copy ${
-          this.outputVideo
-        }"
-        `;
+        for (let i = 1; i <= shortedData.length; i++) {
+          filterComplex.push(`[${i * 2 - 1}:v][${i * 2}:v]concat=n=2:v=1:a=0[v${i}];`);
+        }
+
+        const setSecondPartFilter = (value) => {
+          if (value === 3) {
+            return "[v1][v2]concat=n=2:v=1:a=0[v4];[v3][v4]concat=n=2:v=1:a=0[v5];[0:v][v5]overlay=shortest=1[v6]";
+          }
+          if (value === 4) {
+            return "[v1][v2]concat=n=2:v=1:a=0[v5];[v3][v4]concat=n=2:v=1:a=0[v6];[v5][v6]concat=n=2:v=1:a=0[v7];[0:v][v7]overlay=shortest=1[v8]";
+          }
+          if (value === 5) {
+            return "[v1][v2]concat=n=2:v=1:a=0[v6];[v3][v4]concat=n=2:v=1:a=0[v7];[v5][v6]concat=n=2:v=1:a=0[v8];[v7][v8]concat=n=2:v=1:a=0[v9];[0:v][v9]overlay=shortest=1[v10]";
+          }
+          if (value === 6) {
+            return "[v1][v2]concat=n=2:v=1:a=0[v7];[v3][v4]concat=n=2:v=1:a=0[v8];[v5][v6]concat=n=2:v=1:a=0[v9];[v7][v8]concat=n=2:v=1:a=0[v10];[v9][v10]concat=n=2:v=1:a=0[v11];[0:v][v11]overlay=shortest=1[v12]";
+          }
+        };
+
+        const ffmpegCommand = `ffmpeg -i ${this.backgroundFile} ${commands.join(" ")} -filter_complex "${filterComplex.join("")}${setSecondPartFilter(commands.length)}" -map "[v${
+          commands.length * 2
+        }]" -map 0:a -c:a copy ${this.outputVideo}`;
 
         resolve(ffmpegCommand);
       } catch (error) {
@@ -124,11 +140,14 @@ class ImageToVideoCreator {
   }
 
   async render() {
-    const data = await this._fetchQuizData();
-    const shortedData = await this._sortedListsWithAudioLength(...data);
-    const ffmpegCommand = await this._createFfmpegCommand(shortedData);
-    console.log(ffmpegCommand);
-    //await this._executeCommand(ffmpegCommand);
+    try {
+      const data = await this._fetchQuizData();
+      const shortedData = await this._sortedListsWithAudioLength(...data);
+      const ffmpegCommand = await this._createFfmpegCommand(shortedData);
+      await this._executeCommand(ffmpegCommand);
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
 
