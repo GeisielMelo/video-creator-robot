@@ -1,20 +1,40 @@
 const { exec } = require("child_process");
 const path = require("path");
+const fs = require("fs");
 
 class AudioConcatenator {
-  constructor(audiosPathArray, userId) {
-    this.audiosPathArray = audiosPathArray;
+  constructor(userId) {
     this.userId = userId;
     this.countdown = path.resolve(__dirname, `../templates/countdown.wav`);
     this.outputAudio = path.resolve(__dirname, `../downloads/${userId}/out.wav`);
   }
 
+  async _fetchAudioQuestionsPath() {
+    try {
+      let questionsArray = [];
+      const files = await fs.promises.readdir(path.resolve(__dirname, `../downloads/${this.userId}`));
+
+      files.forEach((file) => {
+        const filePath = path.join(path.resolve(__dirname, `../downloads/${this.userId}`), file);
+        const fileExtension = path.extname(filePath);
+
+        if (fileExtension === ".mp3") {
+          questionsArray.push(filePath);
+        }
+      });
+      return questionsArray;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   async _createFfmpegCommand() {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       try {
         const commands = [];
         const concatParts = [];
-        this.audiosPathArray.forEach((audioPath) => {
+        const audiosPathArray = await this._fetchAudioQuestionsPath(this.userId);
+        audiosPathArray.forEach((audioPath) => {
           commands.push(`-i ${audioPath}`);
           commands.push(`-i ${this.countdown}`);
         });
@@ -25,7 +45,6 @@ class AudioConcatenator {
 
         const ffmpegCommand = `ffmpeg ${commands.join(" ")} -filter_complex "${concatParts.join("")}concat=n=${commands.length}:v=0:a=1" ${this.outputAudio}`;
 
-        
         resolve(ffmpegCommand);
       } catch (error) {
         reject(error);

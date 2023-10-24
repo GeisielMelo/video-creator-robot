@@ -1,5 +1,4 @@
 import path from "path";
-import { fetchAudioQuestionsPath } from "../utils/folders";
 import TextToImagesCreator from "../modules/TextToImagesCreator";
 import ImageToVideoCreator from "../modules/ImageToVideoCreator";
 import AudioConcatenator from "../modules/AudioConcatenator";
@@ -38,7 +37,7 @@ class FileController {
 
       // OK
       // Todo mover fetchAudioQuestionsPath para dentro da classe.
-      const audioConcatenator = new AudioConcatenator(await fetchAudioQuestionsPath(userId), userId);
+      const audioConcatenator = new AudioConcatenator(userId);
       await audioConcatenator.concatenate();
 
       return res.status(200).json({ message: "Imagens geradas com sucesso." });
