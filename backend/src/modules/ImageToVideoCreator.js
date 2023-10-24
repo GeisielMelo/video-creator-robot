@@ -94,17 +94,11 @@ class ImageToVideoCreator {
         }
 
         const setSecondPartFilter = (value) => {
-          if (value === 3) {
-            return "[v1][v2]concat=n=2:v=1:a=0[v4];[v3][v4]concat=n=2:v=1:a=0[v5];[0:v][v5]overlay=shortest=1[v6]";
-          }
-          if (value === 4) {
-            return "[v1][v2]concat=n=2:v=1:a=0[v5];[v3][v4]concat=n=2:v=1:a=0[v6];[v5][v6]concat=n=2:v=1:a=0[v7];[0:v][v7]overlay=shortest=1[v8]";
-          }
           if (value === 5) {
-            return "[v1][v2]concat=n=2:v=1:a=0[v6];[v3][v4]concat=n=2:v=1:a=0[v7];[v5][v6]concat=n=2:v=1:a=0[v8];[v7][v8]concat=n=2:v=1:a=0[v9];[0:v][v9]overlay=shortest=1[v10]";
+            return "[v3][v4]concat=n=2:v=1:a=0[v6];[v5][v6]concat=n=2:v=1:a=0[v7];[v1][v2]concat=n=2:v=1:a=0[v8];[v7][v8]concat=n=2:v=1:a=0[v9];[0:v][v9]overlay=shortest=1[v10]";
           }
           if (value === 6) {
-            return "[v1][v2]concat=n=2:v=1:a=0[v7];[v3][v4]concat=n=2:v=1:a=0[v8];[v5][v6]concat=n=2:v=1:a=0[v9];[v7][v8]concat=n=2:v=1:a=0[v10];[v9][v10]concat=n=2:v=1:a=0[v11];[0:v][v11]overlay=shortest=1[v12]";
+            return "[v3][v4]concat=n=2:v=1:a=0[v7];[v5][v6]concat=n=2:v=1:a=0[v8];[v1][v2]concat=n=2:v=1:a=0[v9];[v7][v8]concat=n=2:v=1:a=0[v10];[v9][v10]concat=n=2:v=1:a=0[v11];[0:v][v11]overlay=shortest=1[v12]";
           }
         };
 
