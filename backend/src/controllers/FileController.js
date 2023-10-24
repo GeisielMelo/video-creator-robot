@@ -18,21 +18,28 @@ class FileController {
   }
 
   async createQuiz(req, res) {
+    // Todo
     // CRIAR MÉTODO PARA DELETAR ARQUIVOS ANTERIORES.
     // REMOVER CRIAÇÃO DE PASTAS DE TEXT TO IMAGES E ADICIONAR EM FOLDERS.
     try {
       const { userId, questions } = req.body;
 
       // OK
-      //const textToImagesCreator = new TextToImagesCreator(questions, userId);
-      //await textToImagesCreator.render();
+      const textToImagesCreator = new TextToImagesCreator(questions, userId);
+      await textToImagesCreator.render();
 
+      // OK
       const imageToVideoCreator = new ImageToVideoCreator(userId);
       await imageToVideoCreator.render();
 
+      // Todo
+      //const textToSpeechCreator = new TextToSpeechCreator(questions, userId);
+      //await textToSpeechCreator.create();
+
       // OK
-      //const audioConcatenator = new AudioConcatenator(await fetchAudioQuestionsPath(userId), userId);
-      //await audioConcatenator.concatenate();
+      // Todo mover fetchAudioQuestionsPath para dentro da classe.
+      const audioConcatenator = new AudioConcatenator(await fetchAudioQuestionsPath(userId), userId);
+      await audioConcatenator.concatenate();
 
       return res.status(200).json({ message: "Imagens geradas com sucesso." });
     } catch (error) {
