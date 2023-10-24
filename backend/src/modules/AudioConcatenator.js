@@ -7,7 +7,7 @@ class AudioConcatenator {
     this.userId = userId;
     this.countdown = path.resolve(__dirname, `../templates/countdown.wav`);
     this.answer = path.resolve(__dirname, `../templates/answer.wav`);
-    this.outputAudio = path.resolve(__dirname, `../downloads/${userId}/out.wav`);
+    this.outputAudio = path.resolve(__dirname, `../downloads/${userId}/out.mp3`);
   }
 
   async _fetchAudioQuestionsPath() {
