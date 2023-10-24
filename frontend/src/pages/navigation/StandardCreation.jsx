@@ -143,10 +143,9 @@ const StandardCreation = () => {
       setEnableDownload(true);
       console.log("Complete");
     } catch (error) {
-      console.error(error.message);
+      console.log("Something gone wrong.");
     } finally {
       setIsProcessing(false);
-      console.log("stopping processing");
     }
   };
 
