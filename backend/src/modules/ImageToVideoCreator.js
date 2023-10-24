@@ -10,6 +10,7 @@ class ImageToVideoCreator {
     this.outputVideo = path.resolve(__dirname, `../downloads/${userId}/out.mp4`);
     this.backgroundFile = path.resolve(__dirname, "../templates/background.mp4");
     this.countdownFile = path.resolve(__dirname, "../templates/countdown.wav");
+    this.answerFile = path.resolve(__dirname, "../templates/answer.wav");
   }
 
   async _fetchQuizData() {
@@ -77,13 +78,14 @@ class ImageToVideoCreator {
         let commands = [];
         let filterComplex = [];
         let countdownLength = await this._fetchAudioLength(this.countdownFile);
+        let answerLength = await this._fetchAudioLength(this.answerFile);
 
         shortedData.forEach((element) => {
           let questionImage = element.questionWithAlternatives;
           let answerImage = element.questionWithAnswer;
           let questionLength = element.questionLength + countdownLength;
-
-          const command = `-loop 1 -t ${questionLength} -i ${questionImage} -loop 1 -t 1 -i ${answerImage}`;
+          
+          const command = `-loop 1 -t ${questionLength} -i ${questionImage} -loop 1 -t ${answerLength} -i ${answerImage}`;
           commands.push(command);
         });
 

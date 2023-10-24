@@ -6,6 +6,7 @@ class AudioConcatenator {
   constructor(userId) {
     this.userId = userId;
     this.countdown = path.resolve(__dirname, `../templates/countdown.wav`);
+    this.answer = path.resolve(__dirname, `../templates/answer.wav`);
     this.outputAudio = path.resolve(__dirname, `../downloads/${userId}/out.wav`);
   }
 
@@ -37,6 +38,7 @@ class AudioConcatenator {
         audiosPathArray.forEach((audioPath) => {
           commands.push(`-i ${audioPath}`);
           commands.push(`-i ${this.countdown}`);
+          commands.push(`-i ${this.answer}`);
         });
 
         for (let i = 0; i < commands.length; i++) {
