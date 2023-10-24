@@ -83,7 +83,7 @@ class TextToImagesCreator {
 
       gm(WIDTH, HEIGHT, "rgba(255, 255, 255, 0)") // Create a transparent text box.
         .gravity("Center") // Box align center.
-        .fill("#ffffff") // Text color.
+        .fill("#008000") // Text color.
         .stroke("#000000") // Border color
         .strokeWidth(4) // Border width.
         .fontSize(textFontSize) // Font size.
