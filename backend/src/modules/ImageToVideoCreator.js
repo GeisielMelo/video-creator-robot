@@ -51,7 +51,7 @@ class ImageToVideoCreator {
         if (err) {
           reject(err);
         } else {
-          const duration = Math.round(metadata.format.duration);
+          const duration = metadata.format.duration;
           resolve(duration);
         }
       });
@@ -84,7 +84,7 @@ class ImageToVideoCreator {
           let questionImage = element.questionWithAlternatives;
           let answerImage = element.questionWithAnswer;
           let questionLength = element.questionLength + countdownLength;
-          
+
           const command = `-loop 1 -t ${questionLength} -i ${questionImage} -loop 1 -t ${answerLength} -i ${answerImage}`;
           commands.push(command);
         });
@@ -135,8 +135,20 @@ class ImageToVideoCreator {
     });
   }
 
+  // This is a provisory function to wait for the images be saved on the user folder.
+  // It will be replaced by a timer function witch checks the folder 3 times for images,  if not find the files return an error.
+  async _waitSomeTime(seconds) {
+    return new Promise((resolve) => {
+      console.log(`Waiting for images...`);
+      setTimeout(() => {
+        resolve();
+      }, seconds);
+    });
+  }
+
   async render() {
     try {
+      await this._waitSomeTime(3000);
       const data = await this._fetchQuizData();
       const shortedData = await this._sortedListsWithAudioLength(...data);
       const ffmpegCommand = await this._createFfmpegCommand(shortedData);
