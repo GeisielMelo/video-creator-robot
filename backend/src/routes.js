@@ -10,8 +10,7 @@ const routes = new Router();
 
 routes.post("/users", UsersController.create);
 routes.post("/sessions", SessionsController.create);
-routes.get("/sessions/:email", SessionsController.show)
-
+routes.get("/sessions/:email", SessionsController.show);
 
 // Every route after this middleware will need a token.
 routes.use(auth);
@@ -24,6 +23,7 @@ routes.get("/users/:id", UsersController.show);
 // Files
 routes.get("/files/:userId", FileController.downloadFile);
 routes.post("/files", FileController.createQuiz);
+routes.get("/files/solicitation/:userId", FileController.fetchSolicitationData);
 
 // Questions
 routes.post("/questions", QuizController.create);

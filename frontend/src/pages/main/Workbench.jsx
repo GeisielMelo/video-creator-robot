@@ -10,6 +10,7 @@ import InsertPageBreakIcon from "@mui/icons-material/InsertPageBreak";
 import PlagiarismIcon from "@mui/icons-material/Plagiarism";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import MenuIcon from "@mui/icons-material/Menu";
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 const Section = styled.section`
   display: flex;
@@ -134,10 +135,13 @@ const Workbench = ({ children, title, page }) => {
         <Button data-centralized={isMenuOpen} data-last-pressed={page === "0"} onClick={() => handleButtonClick("/home")}>
           <HomeIcon /> {showButtonText && <p>Home</p>}
         </Button>
-        <Button data-centralized={isMenuOpen} data-last-pressed={page === "1"} onClick={() => handleButtonClick("/video-quiz")}>
+        <Button data-centralized={isMenuOpen} data-last-pressed={page === "1"} onClick={() => handleButtonClick("/solicitations")}>
+          <AccessTimeIcon /> {showButtonText && <p>Solicitations</p>}
+        </Button>
+        <Button data-centralized={isMenuOpen} data-last-pressed={page === "2"} onClick={() => handleButtonClick("/video-quiz")}>
           <InsertPageBreakIcon /> {showButtonText && <p>Video Quiz</p>}
         </Button>
-        <Button data-centralized={isMenuOpen} data-last-pressed={page === "2"} onClick={() => handleButtonClick("/user-update")}>
+        <Button data-centralized={isMenuOpen} data-last-pressed={page === "3"} onClick={() => handleButtonClick("/user-update")}>
           <PlagiarismIcon /> {showButtonText && <p>User</p>}
         </Button>
         <Button data-centralized={isMenuOpen} disabled={disableMenu} onClick={handleMenuClick}>

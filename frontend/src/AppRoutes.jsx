@@ -10,6 +10,7 @@ import Register from "./pages/main/Register";
 import Workbench from "./pages/main/Workbench";
 
 import Home from "./pages/navigation/Home";
+import Solicitations from "./pages/navigation/Solicitations";
 import StandardCreation from "./pages/navigation/StandardCreation";
 import UserUpdate from "./pages/navigation/UserUpdate";
 
@@ -36,8 +37,9 @@ const AppRoutes = () => {
           <Route path="/sign-up/forgot-password" element={<Public><RecoverPassword /></Public>} />
 
           <Route path="/home" element={<Private><Workbench title="Home" page="0"><Home /></Workbench></Private>} />
-          <Route path="/video-quiz" element={<Private><Workbench title="Standard Creation" page="1"><StandardCreation /></Workbench></Private>} />
-          <Route path="/user-update" element={<Private><Workbench title="User Update" page="2"><UserUpdate /></Workbench></Private>} />
+          <Route path="/solicitations" element={<Private><Workbench title="Solicitations" page="1"><Solicitations /></Workbench></Private>} />
+          <Route path="/video-quiz" element={<Private><Workbench title="Standard Creation" page="2"><StandardCreation /></Workbench></Private>} />
+          <Route path="/user-update" element={<Private><Workbench title="User Update" page="3"><UserUpdate /></Workbench></Private>} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

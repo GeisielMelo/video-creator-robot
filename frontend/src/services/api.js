@@ -31,11 +31,14 @@ export const createQuestions = async (userId, questions) => {
   return api.post("/questions/", { userId, questions });
 };
 
-// ===== Test ===== //
-
 // Standard Creation
-export const createQuiz = async (questions, userId) => {
-  return api.post("/files/", { questions, userId });
+export const createQuiz = async (questions, userId, solicitationNumber) => {
+  return api.post("/files/", { questions, userId, solicitationNumber });
+};
+
+// Find solicitations based on the user id.
+export const fetchSolicitations = async (userId) => {
+  return api.get(`/files/solicitation/${userId}`);
 };
 
 export const downloadImage = async (userId) => {

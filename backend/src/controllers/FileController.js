@@ -1,4 +1,5 @@
 import path from "path";
+import { createFolder, fetchSolicitations } from "../utils/folders";
 import TextToImagesCreator from "../modules/TextToImagesCreator";
 import ImageToVideoCreator from "../modules/ImageToVideoCreator";
 import AudioConcatenator from "../modules/AudioConcatenator";
@@ -17,10 +18,11 @@ class FileController {
 
   async createQuiz(req, res) {
     try {
-      const { userId, questions } = req.body;
+      const { userId, questions, solicitationNumber } = req.body;
 
-      // CRIAR MÉTODO PARA DELETAR ARQUIVOS ANTERIORES.
-      // REMOVER CRIAÇÃO DE PASTAS DE TEXT TO IMAGES E ADICIONAR EM FOLDERS.
+      // CRIAR MÉTODO PARA DELETAR ARQUIVOS E MANTER SOMENTE PASTAS COM 11 DÍGITOS QEU CONTEM ARQUIVOS DENTRO.
+
+      await createFolder(`../downloads/${userId}/${solicitationNumber}`);
 
       const textToImagesCreator = new TextToImagesCreator(questions, userId);
       await textToImagesCreator.render();
@@ -34,9 +36,21 @@ class FileController {
       const audioConcatenator = new AudioConcatenator(userId);
       await audioConcatenator.concatenate();
 
+      // CIAR CLASSE CONCATENADORA PARA JUNTAR VIDEO E AUDIO E FORMAR UM VIDEO, DEPOIS SALVA-LO EM UMA PASTA COM O NÚMERO DA SOLICITAÇÃO.
+
       return res.status(200).json({ message: "Imagens geradas com sucesso." });
     } catch (error) {
       return res.status(500).json({ error: "Falha ao gerar imagens do quiz.", error });
+    }
+  }
+
+  async fetchSolicitationData(req, res) {
+    try {
+      const { userId } = req.params;
+      const data = await fetchSolicitations(userId);
+      return res.status(200).json(data);
+    } catch (error) {
+      return res.status(500).json({ error: "Falha ao buscar dados.", error });
     }
   }
 }
