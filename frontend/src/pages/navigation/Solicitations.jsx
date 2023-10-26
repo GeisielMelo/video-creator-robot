@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import styled from "styled-components";
-import { fetchSolicitations } from "../../services/api";
+import { fetchSolicitations, downloadVideo } from "../../services/api";
 import DoneIcon from "@mui/icons-material/Done";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
 
@@ -52,6 +52,14 @@ const Solicitations = () => {
     }
   }, [solicitations]);
 
+  const handleDownload = async (solicitationNumber, file) => {
+    try {
+      return await downloadVideo(user.id, solicitationNumber, file);
+    } catch (error) {
+      return console.error("Error on download");
+    }
+  };
+
   return (
     <>
       {solicitations === null && <p>Warning: Could not reach server. Please try again later.</p>}
@@ -66,7 +74,12 @@ const Solicitations = () => {
                 <QueryBuilderIcon style={{ color: "orange" }} />
               )}
             </p>
-            <button disabled={!solicitation.archive[0]}>Download</button>
+            <button
+              disabled={!solicitation.archive[0]}
+              onClick={() => handleDownload(solicitation.folder, solicitation.archive[0])}
+            >
+              Download
+            </button>
           </Container>
         );
       })}
