@@ -5,10 +5,9 @@ import styled from "styled-components";
 import AddIcon from "@mui/icons-material/Add";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
-import DownloadIcon from "@mui/icons-material/Download";
 import { Loading } from "../../components/Loading";
 import { processQuiz } from "../../utils/StandardCreationUtils";
-import { createQuiz, downloadImage, indexQuestions, createQuestions } from "../../services/api";
+import { createQuiz, indexQuestions, createQuestions } from "../../services/api";
 
 const Section = styled.section`
   display: flex;
@@ -81,9 +80,9 @@ const StandardCreation = () => {
   const [userQuestions, setUserQuestions] = useState(null);
   const [quizList, setQuizList] = useState([]);
   const [inputValue, setInputValue] = useState("");
-  const [isProcessing, setIsProcessing] = useState(false);
   const [operationFinished, setOperationFinished] = useState(false);
-  const [enableDownload, setEnableDownload] = useState(false);
+  const [questionsAmount, setQuestionAmount] = useState(0);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     if (!userQuestions) {
@@ -120,13 +119,35 @@ const StandardCreation = () => {
       // Adds the quiz to the quiz list.
       setQuizList((prevList) => [...prevList, quizJSON]);
       setInputValue("");
+      setQuestionAmount(questionsAmount + 1);
     } catch (error) {
       console.error(error.message);
     }
   };
 
+  const handleRemoveQuiz = (index) => {
+    setQuizList(quizList.filter((_, i) => i !== index));
+    if (questionsAmount === 0) {
+      setQuestionAmount(0);
+    } else {
+      setQuestionAmount(questionsAmount - 1);
+    }
+  };
+
+  const handleGenerateSolicitationNumber = () => {
+    const min = Math.pow(10, 10);
+    const max = Math.pow(10, 11) - 1;
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  };
+
   const handleSubmit = async () => {
+    if (questionsAmount !== 6) {
+      return alert("You need to add 6 questions.");
+    }
     setIsProcessing(true);
+
+    const solicitationNumber = handleGenerateSolicitationNumber();
+
     let newQuestions = [];
 
     quizList.forEach((quiz) => {
@@ -135,13 +156,12 @@ const StandardCreation = () => {
 
     try {
       // Make the quiz components on the backend and return a download file.
-      await createQuiz(quizList, user.id);
+      await createQuiz(quizList, user.id, solicitationNumber);
       // Create a record of the questions used.
       await createQuestions(user.id, newQuestions);
       // Rest of the code.
       setOperationFinished(true);
-      setEnableDownload(true);
-      console.log("Complete");
+      alert(`Solicitation: ${solicitationNumber} created.`);
     } catch (error) {
       console.log("Something gone wrong.");
     } finally {
@@ -153,14 +173,14 @@ const StandardCreation = () => {
     <Section>
       <Container>
         <textarea
-          disabled={isProcessing || operationFinished}
+          disabled={quizList.length >= 6 || operationFinished}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           placeholder="Quiz"
           cols="30"
           rows="5"
         ></textarea>
-        <button disabled={quizList.length >= 6 || isProcessing || operationFinished} onClick={() => handleAddQuiz(inputValue)}>
+        <button disabled={quizList.length >= 6 || operationFinished} onClick={() => handleAddQuiz(inputValue)}>
           <AddIcon />
         </button>
 
@@ -168,23 +188,14 @@ const StandardCreation = () => {
           <ListContainer key={index}>
             <p>{quiz.question}</p>
             {!isProcessing && !operationFinished && (
-              <RemoveCircleIcon color="error" fontSize="small" onClick={() => setQuizList(quizList.filter((_, i) => i !== index))} />
+              <RemoveCircleIcon color="error" fontSize="small" onClick={() => handleRemoveQuiz(index)} />
             )}
           </ListContainer>
         ))}
 
         {quizList.length != 0 && (
-          <button disabled={isProcessing || operationFinished} onClick={() => handleSubmit()}>
-            {isProcessing ? <Loading /> : <PlayArrowIcon />}
-          </button>
-        )}
-        {enableDownload && (
-          <button
-            onClick={async () => {
-              await downloadImage(user?.id);
-            }}
-          >
-            <DownloadIcon />
+          <button disabled={isProcessing || operationFinished || questionsAmount != 6} onClick={() => handleSubmit()}>
+            {isProcessing ? <Loading /> : questionsAmount != 6 ? <p>{questionsAmount} / 6</p> : <PlayArrowIcon />}
           </button>
         )}
       </Container>
