@@ -8,10 +8,11 @@ class VideoCreator {
     this.outputPath = path.resolve(__dirname, `../downloads/${userId}/${solicitationNumber}/video.mp4`);
     this.videoPath = path.resolve(__dirname, `../downloads/${userId}/out.mp4`);
     this.audioPath = path.resolve(__dirname, `../downloads/${userId}/out.mp3`);
+    this.trackPath = path.resolve(__dirname, `../templates/track.mp3`);
   }
 
   _createFfmpegCommand() {
-    return `ffmpeg -i ${this.videoPath} -i ${this.audioPath} -c:v copy -c:a aac -map 0:v -map 1:a ${this.outputPath}`;
+    return `ffmpeg -i ${this.videoPath} -i ${this.audioPath} -i ${this.trackPath} -filter_complex "[1:a][2:a]amix=inputs=2[aout]" -map 0:v -map "[aout]" -c:v copy -shortest ${this.outputPath}`;
   }
 
   async _executeCommand(command) {
