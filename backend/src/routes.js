@@ -21,7 +21,7 @@ routes.delete("/users/:id", UsersController.delete);
 routes.get("/users/:id", UsersController.show);
 
 // Files
-routes.get("/files/:userId", FileController.downloadFile);
+routes.post("/files/download/", FileController.downloadFile);
 routes.post("/files", FileController.createQuiz);
 routes.get("/files/solicitation/:userId", FileController.fetchSolicitationData);
 

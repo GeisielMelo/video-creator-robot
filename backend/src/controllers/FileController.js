@@ -1,4 +1,5 @@
 import path from "path";
+const fs = require("fs");
 import { createFolder, fetchSolicitations } from "../utils/folders";
 import TextToImagesCreator from "../modules/TextToImagesCreator";
 import ImageToVideoCreator from "../modules/ImageToVideoCreator";
@@ -9,11 +10,22 @@ import VideoCreator from "../modules/VideoCreator";
 class FileController {
   async downloadFile(req, res) {
     try {
-      const { userId } = req.params;
-      const filePath = path.join(__dirname, `../downloads/${userId}/file.zip`);
-      res.sendFile(filePath, { headers: { "Content-Type": "file/zip" } });
+      const { userId, solicitationNumber, file } = req.body;
+      const filePath = path.join(__dirname, `../downloads/${userId}/${solicitationNumber}/${file}`);
+
+      if (!fs.existsSync(filePath)) {
+        return res.status(404).json({ error: "File not found" });
+      }
+
+      const stream = fs.createReadStream(filePath);
+
+      res.setHeader("Content-Type", "application/octet-stream");
+      res.setHeader("Content-Disposition", `attachment; filename=${file}`);
+
+      stream.pipe(res);
     } catch (error) {
-      return res.status(500).json({ error: "Download: Internal server error." });
+      console.error(error);
+      return res.status(500).json({ error: "Download: Internal Server Error." });
     }
   }
 
