@@ -4,6 +4,7 @@ import TextToImagesCreator from "../modules/TextToImagesCreator";
 import ImageToVideoCreator from "../modules/ImageToVideoCreator";
 import AudioConcatenator from "../modules/AudioConcatenator";
 import TextToSpeechCreator from "../modules/TextToSpeechCreator";
+import VideoCreator from "../modules/VideoCreator";
 
 class FileController {
   async downloadFile(req, res) {
@@ -12,7 +13,7 @@ class FileController {
       const filePath = path.join(__dirname, `../downloads/${userId}/file.zip`);
       res.sendFile(filePath, { headers: { "Content-Type": "file/zip" } });
     } catch (error) {
-      return res.status(500).json({ error: "Falha ao baixar o arquivo." });
+      return res.status(500).json({ error: "Download: Internal server error." });
     }
   }
 
@@ -36,11 +37,12 @@ class FileController {
       const audioConcatenator = new AudioConcatenator(userId);
       await audioConcatenator.concatenate();
 
-      // CIAR CLASSE CONCATENADORA PARA JUNTAR VIDEO E AUDIO E FORMAR UM VIDEO, DEPOIS SALVA-LO EM UMA PASTA COM O NÚMERO DA SOLICITAÇÃO.
+      const videoCreator = new VideoCreator(userId, solicitationNumber);
+      await videoCreator.render();
 
-      return res.status(200).json({ message: "Imagens geradas com sucesso." });
+      return res.status(200);
     } catch (error) {
-      return res.status(500).json({ error: "Falha ao gerar imagens do quiz.", error });
+      return res.status(500).json({ error: "Creation: Internal server error." });
     }
   }
 
@@ -50,7 +52,7 @@ class FileController {
       const data = await fetchSolicitations(userId);
       return res.status(200).json(data);
     } catch (error) {
-      return res.status(500).json({ error: "Falha ao buscar dados.", error });
+      return res.status(500).json({ error: "Solicitation: Internal server error." });
     }
   }
 }
