@@ -104,7 +104,7 @@ class ImageToVideoCreator {
 
         const ffmpegCommand = `ffmpeg -i ${this.backgroundFile} ${commands.join(" ")} -filter_complex "${filterComplex.join("")}${setSecondPartFilter(commands.length)}" -map "[v${
           commands.length * 2
-        }]" -map 0:a -c:a copy -c:v h264_amf ${this.outputVideo}`;
+        }]" -c:v h264_amf ${this.outputVideo}`;
 
         resolve(ffmpegCommand);
       } catch (error) {
