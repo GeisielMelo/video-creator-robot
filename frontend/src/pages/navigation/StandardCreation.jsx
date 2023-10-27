@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import _isEqual from "lodash/isEqual";
 import styled from "styled-components";
 import AddIcon from "@mui/icons-material/Add";
@@ -7,7 +8,7 @@ import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import { Loading } from "../../components/Loading";
 import { processQuiz } from "../../utils/StandardCreationUtils";
-import { createQuiz, indexQuestions, createQuestions } from "../../services/api";
+import { createQuiz, indexQuestions, createUsedQuestions } from "../../services/api";
 
 const Section = styled.section`
   display: flex;
@@ -76,6 +77,7 @@ const ListContainer = styled.div`
 `;
 
 const StandardCreation = () => {
+  const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   const [userQuestions, setUserQuestions] = useState(null);
   const [quizList, setQuizList] = useState([]);
@@ -155,17 +157,14 @@ const StandardCreation = () => {
     });
 
     try {
-      // Make the quiz components on the backend and return a download file.
       await createQuiz(quizList, user.id, solicitationNumber);
-      // Create a record of the questions used.
-      await createQuestions(user.id, newQuestions);
-      // Rest of the code.
+      await createUsedQuestions(user.id, newQuestions);
       setOperationFinished(true);
-      alert(`Solicitation: ${solicitationNumber} created.`);
+      setIsProcessing(false);
+      navigate("/solicitations");
+      console.log("Operation finished.");
     } catch (error) {
       console.log("Something gone wrong.");
-    } finally {
-      setIsProcessing(false);
     }
   };
 

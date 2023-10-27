@@ -27,7 +27,7 @@ export const indexQuestions = async (userId) => {
   return api.get(`/questions/${userId}`);
 };
 
-export const createQuestions = async (userId, questions) => {
+export const createUsedQuestions = async (userId, questions) => {
   return api.post("/questions/", { userId, questions });
 };
 
