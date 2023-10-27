@@ -49,7 +49,14 @@ class TextToImagesCreator {
   async _createTemporaryAlternatives(list) {
     return new Promise((resolve, reject) => {
       const formattedList = `A)${list[0].text} \nB)${list[1].text} \nC)${list[2].text} \nD)${list[3].text} `;
-      const textFontSize = 88; // Define fontSize based on textLength.
+
+      const textFontSize = Math.max(
+        list[0]?.text.length || 0,
+        list[1]?.text.length || 0,
+        list[2]?.text.length || 0,
+        list[3]?.text.length || 0
+      ) > 20 ? 58 : 72; // Define fontSize based on textLength.
+
       const WIDTH = 1080; // Width of the image in pixels.
       const HEIGHT = 500; // Height of the image in pixels.
 
@@ -76,8 +83,8 @@ class TextToImagesCreator {
   async _createTemporaryAnswer(list) {
     return new Promise((resolve, reject) => {
       const correctAnswer = list.find((item) => item.correct === true);
-      const formattedList = `${correctAnswer.label.toUpperCase()}) ${correctAnswer.text}`;
-      const textFontSize = 88; // Define fontSize based on textLength.
+      const formattedAnswer = `${correctAnswer.label.toUpperCase()}) ${correctAnswer.text}`;
+      const textFontSize = formattedAnswer.length > 20 ? 58 : 72 ; // Define fontSize based on textLength.
       const WIDTH = 1080; // Width of the image in pixels.
       const HEIGHT = 500; // Height of the image in pixels.
 
@@ -88,7 +95,7 @@ class TextToImagesCreator {
         .strokeWidth(4) // Border width.
         .fontSize(textFontSize) // Font size.
         .font(this.fontFamily) // Font family
-        .drawText(0, 0, formattedList) // Generate the text.
+        .drawText(0, 0, formattedAnswer) // Generate the text.
         .write(this.tempAnswer, function (err) {
           if (err) {
             reject(err);
