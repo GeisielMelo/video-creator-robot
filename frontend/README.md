@@ -1,2 +1,0 @@
-# Tars
- react app
