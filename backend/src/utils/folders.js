@@ -31,17 +31,24 @@ async function fetchSolicitations(userId) {
   }
 }
 
-async function deleteFiles(directoryPath, extension) {
+async function deleteUserFiles(userId) {
   try {
-    const files = await fs.promises.readdir(directoryPath);
+    const userFolder = path.resolve(__dirname, `../downloads/${userId}`);
+    const files = await fs.promises.readdir(userFolder);
 
     for (const file of files) {
-      const filePath = path.join(directoryPath, file);
-      const stats = await fs.promises.stat(filePath);
+      const filePath = path.join(userFolder, file);
 
-      if (stats.isFile() && path.extname(file) === extension) {
+      if (filePath.includes("png")) {
         await fs.promises.unlink(filePath);
-        console.log(`Deleted: ${filePath}`);
+      }
+
+      if (filePath.includes("mp4")) {
+        await fs.promises.unlink(filePath);
+      }
+
+      if (filePath.includes("mp3")) {
+        await fs.promises.unlink(filePath);
       }
     }
   } catch (err) {
@@ -49,4 +56,4 @@ async function deleteFiles(directoryPath, extension) {
   }
 }
 
-module.exports = { createFolder, fetchSolicitations, deleteFiles };
+module.exports = { createFolder, fetchSolicitations, deleteUserFiles };

@@ -1,6 +1,6 @@
 import path from "path";
 const fs = require("fs");
-import { createFolder, fetchSolicitations } from "../utils/folders";
+import { createFolder, fetchSolicitations, deleteUserFiles } from "../utils/folders";
 import TextToImagesCreator from "../modules/TextToImagesCreator";
 import ImageToVideoCreator from "../modules/ImageToVideoCreator";
 import AudioConcatenator from "../modules/AudioConcatenator";
@@ -33,8 +33,7 @@ class FileController {
     try {
       const { userId, questions, solicitationNumber } = req.body;
 
-      // CRIAR MÉTODO PARA DELETAR ARQUIVOS E MANTER SOMENTE PASTAS COM 11 DÍGITOS QEU CONTEM ARQUIVOS DENTRO.
-
+      await deleteUserFiles(userId);
       await createFolder(`../downloads/${userId}/${solicitationNumber}`);
 
       const textToImagesCreator = new TextToImagesCreator(questions, userId);
@@ -51,6 +50,8 @@ class FileController {
 
       const videoCreator = new VideoCreator(userId, solicitationNumber);
       await videoCreator.render();
+
+      await deleteUserFiles(userId);
 
       return res.status(200).json({ success: "Quiz successfully created." });
     } catch (error) {
