@@ -148,7 +148,7 @@ class ImageToVideoCreator {
 
   async render() {
     try {
-      await this._waitSomeTime(3000);
+      await this._waitSomeTime(5000);
       const data = await this._fetchQuizData();
       const shortedData = await this._sortedListsWithAudioLength(...data);
       const ffmpegCommand = await this._createFfmpegCommand(shortedData);

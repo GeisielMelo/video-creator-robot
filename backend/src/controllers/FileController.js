@@ -40,11 +40,11 @@ class FileController {
       const textToImagesCreator = new TextToImagesCreator(questions, userId);
       await textToImagesCreator.render();
 
-      const imageToVideoCreator = new ImageToVideoCreator(userId);
-      await imageToVideoCreator.render();
-
       const textToSpeechCreator = new TextToSpeechCreator(questions, userId);
       await textToSpeechCreator.CreateAudiosWithElevenLabs();
+
+      const imageToVideoCreator = new ImageToVideoCreator(userId);
+      await imageToVideoCreator.render();
 
       const audioConcatenator = new AudioConcatenator(userId);
       await audioConcatenator.concatenate();
@@ -52,7 +52,7 @@ class FileController {
       const videoCreator = new VideoCreator(userId, solicitationNumber);
       await videoCreator.render();
 
-      return res.status(200);
+      return res.status(200).json({ success: "Quiz successfully created." });
     } catch (error) {
       return res.status(500).json({ error: "Creation: Internal server error." });
     }
