@@ -62,7 +62,8 @@ const Solicitations = () => {
 
   return (
     <>
-      {solicitations === null && <p>Warning: Could not reach server. Please try again later.</p>}
+      {solicitations === null ||
+        (Array.isArray(solicitations) && solicitations.length === 0 && <p>No solicitations found.</p>)}
       {solicitations?.map((solicitation, index) => {
         return (
           <Container key={index}>
