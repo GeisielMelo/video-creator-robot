@@ -5,6 +5,7 @@ import UsersController from "./controllers/UsersController";
 import SessionsController from "./controllers/SessionsController";
 import FileController from "./controllers/FileController";
 import QuizController from "./controllers/QuizController";
+import SolicitationController from "./controllers/SolicitationController";
 
 const routes = new Router();
 
@@ -12,6 +13,13 @@ routes.post("/users", UsersController.create);
 routes.post("/sessions", SessionsController.create);
 routes.get("/sessions/:email", SessionsController.show);
 
+
+////////////////////////////////////////////
+
+routes.post("/solicitations", SolicitationController.create);
+routes.get("/solicitations/:userId", SolicitationController.index);
+
+///////////////////////////////////////////
 // Every route after this middleware will need a token.
 routes.use(auth);
 
