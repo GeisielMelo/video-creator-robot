@@ -1,11 +1,7 @@
 import path from "path";
 const fs = require("fs");
-import { createFolder, fetchSolicitations, deleteUserFiles } from "../utils/folders";
-import TextToImagesCreator from "../modules/TextToImagesCreator";
-import ImageToVideoCreator from "../modules/ImageToVideoCreator";
-import AudioConcatenator from "../modules/AudioConcatenator";
-import TextToSpeechCreator from "../modules/TextToSpeechCreator";
-import VideoCreator from "../modules/VideoCreator";
+import { fetchSolicitations } from "../utils/folders";
+import Queue from "../middlewares/queue";
 
 class FileController {
   async downloadFile(req, res) {
@@ -32,28 +28,9 @@ class FileController {
   async createQuiz(req, res) {
     try {
       const { userId, questions, solicitationNumber } = req.body;
-
-      await deleteUserFiles(userId);
-      await createFolder(`../downloads/${userId}/${solicitationNumber}`);
-
-      const textToImagesCreator = new TextToImagesCreator(questions, userId);
-      await textToImagesCreator.render();
-
-      const textToSpeechCreator = new TextToSpeechCreator(questions, userId);
-      await textToSpeechCreator.CreateAudiosWithElevenLabs();
-
-      const imageToVideoCreator = new ImageToVideoCreator(userId);
-      await imageToVideoCreator.render();
-
-      const audioConcatenator = new AudioConcatenator(userId);
-      await audioConcatenator.concatenate();
-
-      const videoCreator = new VideoCreator(userId, solicitationNumber);
-      await videoCreator.render();
-
-      await deleteUserFiles(userId);
-
-      return res.status(200).json({ success: "Quiz successfully created." });
+      const quiz = { userId, questions, solicitationNumber };
+      await Queue.add({ quiz });
+      return res.status(200).json({ success: "Quiz solicitation created." });
     } catch (error) {
       return res.status(500).json({ error: "Creation: Internal server error." });
     }
