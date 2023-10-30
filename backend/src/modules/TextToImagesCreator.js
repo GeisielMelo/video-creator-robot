@@ -7,12 +7,11 @@ class TextToImagesCreator {
   constructor(jsonArray, userId) {
     this.jsonArray = jsonArray;
     this.userId = userId;
-    this.userFolder = path.resolve(__dirname, `../downloads/${userId}`);
     this.fontFamily = path.resolve(__dirname, "../fonts/Poppins-Bold.ttf");
-    this.tempQuestion = path.resolve(__dirname, `../downloads/${userId}/tempQuestion.png`);
-    this.tempAlternatives = path.resolve(__dirname, `../downloads/${userId}/tempAlternatives.png`);
-    this.tempAnswer = path.resolve(__dirname, `../downloads/${userId}/tempAnswer.png`);
-    this.tempBackground = path.resolve(__dirname, `../downloads/${userId}/tempBackground.png`);
+    this.tempQuestion = path.resolve(__dirname, `../archives/${userId}/processing/tempQuestion.png`);
+    this.tempAlternatives = path.resolve(__dirname, `../archives/${userId}/processing/tempAlternatives.png`);
+    this.tempAnswer = path.resolve(__dirname, `../archives/${userId}/processing/tempAnswer.png`);
+    this.tempBackground = path.resolve(__dirname, `../archives/${userId}/processing/tempBackground.png`);
     this.background = path.resolve(__dirname, "../templates/background.png");
   }
 
@@ -37,9 +36,8 @@ class TextToImagesCreator {
         .write(this.tempQuestion, function (err) {
           if (err) {
             reject(err);
-            console.log("Temporary text question: Error.");
+            throw new Error(`Temporary text question: ${err}`);
           } else {
-            console.log("Temporary text question: Done.");
             resolve();
           }
         });
@@ -50,12 +48,15 @@ class TextToImagesCreator {
     return new Promise((resolve, reject) => {
       const formattedList = `A)${list[0].text} \nB)${list[1].text} \nC)${list[2].text} \nD)${list[3].text} `;
 
-      const textFontSize = Math.max(
-        list[0]?.text.length || 0,
-        list[1]?.text.length || 0,
-        list[2]?.text.length || 0,
-        list[3]?.text.length || 0
-      ) > 20 ? 58 : 72; // Define fontSize based on textLength.
+      const textFontSize =
+        Math.max(
+          list[0]?.text.length || 0,
+          list[1]?.text.length || 0,
+          list[2]?.text.length || 0,
+          list[3]?.text.length || 0
+        ) > 20
+          ? 58
+          : 72; // Define fontSize based on textLength.
 
       const WIDTH = 1080; // Width of the image in pixels.
       const HEIGHT = 500; // Height of the image in pixels.
@@ -71,9 +72,8 @@ class TextToImagesCreator {
         .write(this.tempAlternatives, function (err) {
           if (err) {
             reject(err);
-            console.log("Temporary text alternative: Error.");
+            throw new Error(`Temporary text alternative: ${err}`);
           } else {
-            console.log("Temporary text alternative: Done.");
             resolve();
           }
         });
@@ -84,7 +84,7 @@ class TextToImagesCreator {
     return new Promise((resolve, reject) => {
       const correctAnswer = list.find((item) => item.correct === true);
       const formattedAnswer = `${correctAnswer.label.toUpperCase()}) ${correctAnswer.text}`;
-      const textFontSize = formattedAnswer.length > 20 ? 58 : 72 ; // Define fontSize based on textLength.
+      const textFontSize = formattedAnswer.length > 20 ? 58 : 72; // Define fontSize based on textLength.
       const WIDTH = 1080; // Width of the image in pixels.
       const HEIGHT = 500; // Height of the image in pixels.
 
@@ -99,9 +99,8 @@ class TextToImagesCreator {
         .write(this.tempAnswer, function (err) {
           if (err) {
             reject(err);
-            console.log("Temporary text answer: Error.");
+            throw new Error(`Temporary text answer: ${err}`);
           } else {
-            console.log("Temporary text answer: Done.");
             resolve();
           }
         });
@@ -116,9 +115,8 @@ class TextToImagesCreator {
         .write(this.tempBackground, function (err) {
           if (err) {
             reject(err);
-            console.log("Temporary background creation: Error.");
+            throw new Error(`Temporary background creation: ${err}`);
           } else {
-            console.log("Temporary background creation: Done.");
             resolve();
           }
         });
@@ -126,7 +124,10 @@ class TextToImagesCreator {
   }
 
   async _createAlternatives(index) {
-    const outputFile = path.resolve(__dirname, `../downloads/${this.userId}/questionWithAlternatives${index + 1}.png`);
+    const outputFile = path.resolve(
+      __dirname,
+      `../archives/${this.userId}/processing/questionWithAlternatives${index + 1}.png`
+    );
     return new Promise((resolve, reject) => {
       gm(this.tempBackground)
         .composite(this.tempAlternatives)
@@ -134,9 +135,8 @@ class TextToImagesCreator {
         .write(outputFile, function (err) {
           if (err) {
             reject(err);
-            console.log("Creating question with alternatives: Error.");
+            throw new Error(`Creating question with alternatives: ${err}`);
           } else {
-            console.log("Creating question with alternatives: Done.");
             resolve();
           }
         });
@@ -144,7 +144,10 @@ class TextToImagesCreator {
   }
 
   async _createAnswer(index) {
-    const outputFile = path.resolve(__dirname, `../downloads/${this.userId}/questionWithAnswer${index + 1}.png`);
+    const outputFile = path.resolve(
+      __dirname,
+      `../archives/${this.userId}/processing/questionWithAnswer${index + 1}.png`
+    );
     return new Promise((resolve, reject) => {
       gm(this.tempBackground)
         .composite(this.tempAnswer)
@@ -152,9 +155,8 @@ class TextToImagesCreator {
         .write(outputFile, function (err) {
           if (err) {
             reject(err);
-            console.log("Creating question with answer: Error.");
+            throw new Error(`Creating question with answer: ${err}`);
           } else {
-            console.log("Creating question with answer: Done.");
             resolve();
           }
         });
@@ -171,21 +173,13 @@ class TextToImagesCreator {
       await this._createTemporaryAnswer(options);
       await this._createAnswer(index);
     } catch (error) {
-      console.error("Error on process question.");
+      throw new Error(`Error on process question`);
     }
   }
 
   async _processQuestions(index) {
     const element = this.jsonArray[index];
     await this._processQuestion(element.question, element.options, index);
-  }
-
-  async _createFolder() {
-    try {
-      await fs.mkdir(this.userFolder, { recursive: true });
-    } catch (error) {
-      console.error(`Error on folder creation.`);
-    }
   }
 
   async _deleteTempFiles() {
@@ -195,22 +189,21 @@ class TextToImagesCreator {
       await fs.unlink(this.tempAnswer);
       await fs.unlink(this.tempBackground);
     } catch (error) {
-      console.error(`Error on deleting temporary files.`);
+      throw new Error(`Error on deleting temporary files.`);
     }
   }
 
   async render() {
+    console.log(`Crating temp images for user:${this.userId}`);
     try {
-      await this._createFolder(`../downloads/${this.userId}`);
-
       for (let i = 0; i < this.jsonArray.length; i++) {
         await this._processQuestions(i, this.jsonArray);
       }
-
       await this._deleteTempFiles();
     } catch (error) {
-      console.error(`Error on creating quiz images.`);
+      throw new Error(`Error on creating quiz images.`);
     }
+    console.log(`Successfully created images for user:${this.userId}`);
   }
 }
 

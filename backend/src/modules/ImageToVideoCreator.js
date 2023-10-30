@@ -6,8 +6,7 @@ const { exec } = require("child_process");
 class ImageToVideoCreator {
   constructor(userId) {
     this.userId = userId;
-    this.userFolder = path.resolve(__dirname, `../downloads/${userId}`);
-    this.outputVideo = path.resolve(__dirname, `../downloads/${userId}/out.mp4`);
+    this.outputVideo = path.resolve(__dirname, `../archives/${userId}/processing/out.mp4`);
     this.backgroundFile = path.resolve(__dirname, "../templates/background.mp4");
     this.countdownFile = path.resolve(__dirname, "../templates/countdown.wav");
     this.answerFile = path.resolve(__dirname, "../templates/answer.wav");
@@ -18,10 +17,10 @@ class ImageToVideoCreator {
       let questionWithAlternatives = [];
       let questionWithAnswer = [];
       let questionAudio = [];
-      const files = await fs.promises.readdir(path.resolve(__dirname, `../downloads/${this.userId}`));
+      const files = await fs.promises.readdir(path.resolve(__dirname, `../archives/${this.userId}/processing`));
 
       files.forEach((file) => {
-        const filePath = path.join(path.resolve(__dirname, `../downloads/${this.userId}`), file);
+        const filePath = path.join(path.resolve(__dirname, `../archives/${this.userId}/processing`), file);
         const fileExt = path.extname(filePath);
 
         if (file.includes("questionWithAlternatives")) {
@@ -154,7 +153,7 @@ class ImageToVideoCreator {
       const ffmpegCommand = await this._createFfmpegCommand(shortedData);
       await this._executeCommand(ffmpegCommand);
     } catch (error) {
-      console.log(error);
+      throw new Error(`Fail on creating video track.  ${error}`)
     }
   }
 }

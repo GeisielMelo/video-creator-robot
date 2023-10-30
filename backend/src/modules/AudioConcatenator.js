@@ -7,16 +7,16 @@ class AudioConcatenator {
     this.userId = userId;
     this.countdown = path.resolve(__dirname, `../templates/countdown.wav`);
     this.answer = path.resolve(__dirname, `../templates/answer.wav`);
-    this.outputAudio = path.resolve(__dirname, `../downloads/${userId}/out.mp3`);
+    this.outputAudio = path.resolve(__dirname, `../archives/${userId}/processing/out.mp3`);
   }
 
   async _fetchAudioQuestionsPath() {
     try {
       let questionsArray = [];
-      const files = await fs.promises.readdir(path.resolve(__dirname, `../downloads/${this.userId}`));
+      const files = await fs.promises.readdir(path.resolve(__dirname, `../archives/${this.userId}/processing`));
 
       files.forEach((file) => {
-        const filePath = path.join(path.resolve(__dirname, `../downloads/${this.userId}`), file);
+        const filePath = path.join(path.resolve(__dirname, `../archives/${this.userId}/processing`), file);
         const fileExtension = path.extname(filePath);
 
         if (fileExtension === ".mp3") {

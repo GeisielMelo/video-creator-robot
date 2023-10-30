@@ -33,7 +33,7 @@ class TextToSpeechCreator {
           responseType: "stream",
         });
 
-        const outputAudio = path.resolve(__dirname, `../downloads/${this.userId}/${outputName}.mp3`);
+        const outputAudio = path.resolve(__dirname, `../archives/${this.userId}/processing/${outputName}.mp3`);
         const writer = fs.createWriteStream(outputAudio);
 
         response.data.on("data", (chunk) => {
@@ -51,6 +51,7 @@ class TextToSpeechCreator {
   }
 
   async CreateAudiosWithElevenLabs() {
+    console.log(`Creating ElevenLabs audios for user:${this.userId}`);
     try {
       for (let [index, element] of this.jsonArray.entries()) {
         await this._elevenLabsAudioGenerator(element.question, `question${index + 1}`);
@@ -58,6 +59,7 @@ class TextToSpeechCreator {
     } catch (error) {
       console.error(`Error on generate audios with elevenLabs.`);
     }
+    console.log(`Successfully ElevenLabs audios for user:${this.userId}`);
   }
 }
 

@@ -2,9 +2,8 @@ const path = require("path");
 const fs = require("fs");
 
 class FilesManagement {
-  constructor(userId, solicitationId) {
+  constructor(userId) {
     this.userId = userId;
-    this.solicitationId = solicitationId;
     this.userPath = path.join(__dirname, `../archives/${userId}`);
     this.userProcessingPath = path.join(__dirname, `../archives/${userId}/processing`);
     this.userOutputPath = path.join(__dirname, `../archives/${userId}/output`);
