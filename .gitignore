@@ -1,5 +1,5 @@
 # Custom ignore
-backend/src/downloads/*
+backend/src/archives/*
 
 # Logs
 logs
