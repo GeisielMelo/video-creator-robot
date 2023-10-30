@@ -29,7 +29,7 @@ class FileController {
     try {
       const { userId, questions, solicitationNumber } = req.body;
       const quiz = { userId, questions, solicitationNumber };
-      await Queue.add({ quiz });
+      await Queue.add('QuizCreation', { quiz });
       return res.status(200).json({ success: "Quiz solicitation created." });
     } catch (error) {
       return res.status(500).json({ error: "Creation: Internal server error." });

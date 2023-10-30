@@ -17,8 +17,8 @@ routes.get("/sessions/:email", SessionsController.show);
 ////////////////////////////////////////////
 
 routes.post("/files/teste", FileController.createQuiz);
-routes.post("/solicitations", SolicitationController.create);
-routes.get("/solicitations/:userId", SolicitationController.index);
+// routes.post("/solicitations", SolicitationController.create);
+// routes.get("/solicitations/:userId", SolicitationController.index);
 
 ///////////////////////////////////////////
 // Every route after this middleware will need a token.

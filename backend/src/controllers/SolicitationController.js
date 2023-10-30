@@ -17,13 +17,12 @@ class SolicitationController {
     }
   }
 
-  async create(req, res) {
+  async create(userId) {
     try {
-      const { userId } = req.body;
       const user = await User.findById(userId);
 
       if (!user) {
-        return res.status(400).json({ error: "User not found" });
+        return { error: false, message: "User not found" };
       }
 
       const createdSolicitation = await Solicitation.create({
@@ -31,9 +30,9 @@ class SolicitationController {
         status: "pending",
       });
 
-      return res.status(201).json({ id: createdSolicitation._id });
+      return createdSolicitation._id;
     } catch (error) {
-      return res.status(400).json({ error: "Internal server error" });
+      return { error: false, message: "Internal server error" };
     }
   }
 
@@ -42,14 +41,14 @@ class SolicitationController {
       const solicitation = await Solicitation.findById(id);
 
       if (!solicitation) {
-        return { success: false, message: "Solicitation not found" };
+        return { error: false, message: "Solicitation not found" };
       }
 
       await solicitation.updateOne({ status });
 
       return { success: true, message: `Solicitation ${id} updated` };
     } catch (error) {
-      return { success: false, message: "Internal server error" };
+      return { error: false, message: "Internal server error" };
     }
   }
 
@@ -58,14 +57,14 @@ class SolicitationController {
       const solicitation = await Solicitation.findById(id);
 
       if (!solicitation) {
-        return { success: false, message: "Solicitation not found" };
+        return { error: false, message: "Solicitation not found" };
       }
 
       await solicitation.deleteOne();
 
       return { success: true, message: `Solicitation ${id} deleted` };
     } catch (error) {
-      return { success: false, message: "Internal server error" };
+      return { error: false, message: "Internal server error" };
     }
   }
 }
