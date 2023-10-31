@@ -1,3 +1,5 @@
+require("dotenv").config();
+import mongoose from "mongoose";
 import Solicitation from "../models/Solicitation";
 import User from "../models/User";
 
@@ -35,6 +37,27 @@ class SolicitationController {
       return res.json(createdSolicitation._id);
     } catch (error) {
       return res.status(500).json({ error: "Internal server error" });
+    }
+  }
+
+  async update(solicitationId, newStatus) {
+    try {
+      await mongoose.connect(process.env.MONGODB_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
+
+      const solicitation = await Solicitation.findById(solicitationId);
+
+      if (!solicitation) {
+        throw new Error("Solicitation not found");
+      }
+
+      await Solicitation.findByIdAndUpdate(solicitationId, { status: newStatus }, { new: true });
+    } catch (error) {
+      throw new Error(error.message);
+    } finally {
+      await mongoose.connection.close();
     }
   }
 }

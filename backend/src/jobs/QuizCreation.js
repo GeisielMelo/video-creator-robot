@@ -4,7 +4,7 @@ import AudioConcatenator from "../modules/AudioConcatenator";
 import TextToSpeechCreator from "../modules/TextToSpeechCreator";
 import VideoCreator from "../modules/VideoCreator";
 import FilesManagement from "../modules/FilesManagement";
-import updateSolicitationStatus from "../utils/updateSolicitationStatus";
+import SolicitationController from "../controllers/SolicitationController";
 
 export default {
   key: "QuizCreation",
@@ -19,18 +19,18 @@ export default {
     const videoCreator = new VideoCreator(userId, solicitationNumber);
 
     try {
-      await filesManagement.createUserFolders();
-      await filesManagement.clearProcessingFolder();
-      await textToImagesCreator.render();
-      await textToSpeechCreator.CreateAudiosWithElevenLabs();
-      await imageToVideoCreator.render();
-      await audioConcatenator.concatenate();
-      await videoCreator.render();
-      await filesManagement.clearProcessingFolder();
-      await updateSolicitationStatus(solicitationNumber, "done");
+      // await filesManagement.createUserFolders();
+      // await filesManagement.clearProcessingFolder();
+      // await textToImagesCreator.render();
+      // await textToSpeechCreator.CreateAudiosWithElevenLabs();
+      // await imageToVideoCreator.render();
+      // await audioConcatenator.concatenate();
+      // await videoCreator.render();
+      // await filesManagement.clearProcessingFolder();
+      await SolicitationController.update(solicitationNumber, "done");
       return { Job: "Quiz Creation: Done" };
     } catch (error) {
-      await updateSolicitationStatus(solicitationNumber, "fail");
+      await SolicitationController.update(solicitationNumber, "fail");
       return console.log(error);
     }
   },
