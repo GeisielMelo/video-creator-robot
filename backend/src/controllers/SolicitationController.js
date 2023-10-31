@@ -34,7 +34,7 @@ class SolicitationController {
 
       return res.json(createdSolicitation._id);
     } catch (error) {
-      throw new Error(error.message);
+      return res.status(500).json({ error: "Internal server error" });
     }
   }
 }
