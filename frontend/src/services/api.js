@@ -31,16 +31,23 @@ export const createUsedQuestions = async (userId, questions) => {
   return api.post("/questions/", { userId, questions });
 };
 
+// Solicitations
+export const createSolicitation = async (userId) => {
+  return api.post("/solicitations/", { userId });
+};
+
+export const fetchSolicitations = async (userId) => {
+  return api.get(`/solicitations/${userId}`);
+};
+
 // Standard Creation
 export const createQuiz = async (questions, userId, solicitationNumber) => {
   return api.post("/files/", { questions, userId, solicitationNumber });
 };
 
 // Find solicitations based on the user id.
-export const fetchSolicitations = async (userId) => {
-  return api.get(`/files/solicitation/${userId}`);
-};
 
-export const downloadVideo = async (userId, solicitationNumber, file) => {
-  return api.post("/files/download/", { userId, solicitationNumber, file });
+// Downloads
+export const downloadVideo = async (userId, solicitationNumber) => {
+  return api.get(`/files/download/${userId}/${solicitationNumber}`);
 };
