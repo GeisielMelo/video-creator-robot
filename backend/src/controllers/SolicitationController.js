@@ -1,3 +1,5 @@
+require("dotenv").config();
+import mongoose from "mongoose";
 import Solicitation from "../models/Solicitation";
 import User from "../models/User";
 
@@ -17,12 +19,14 @@ class SolicitationController {
     }
   }
 
-  async create(userId) {
+  async create(req, res) {
     try {
+      const { userId } = req.body;
+      console.log(userId);
       const user = await User.findById(userId);
 
       if (!user) {
-        return { error: false, message: "User not found" };
+        return res.status(404).json({ error: "User not found" });
       }
 
       const createdSolicitation = await Solicitation.create({
@@ -30,41 +34,30 @@ class SolicitationController {
         status: "pending",
       });
 
-      return createdSolicitation._id;
+      return res.json(createdSolicitation._id);
     } catch (error) {
-      return { error: false, message: "Internal server error" };
+      return res.status(500).json({ error: "Internal server error" });
     }
   }
 
-  async update(id, status) {
+  async update(solicitationId, newStatus) {
     try {
-      const solicitation = await Solicitation.findById(id);
+      await mongoose.connect(process.env.MONGODB_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
+
+      const solicitation = await Solicitation.findById(solicitationId);
 
       if (!solicitation) {
-        return { error: false, message: "Solicitation not found" };
+        throw new Error("Solicitation not found");
       }
 
-      await solicitation.updateOne({ status });
-
-      return { success: true, message: `Solicitation ${id} updated` };
+      await Solicitation.findByIdAndUpdate(solicitationId, { status: newStatus }, { new: true });
     } catch (error) {
-      return { error: false, message: "Internal server error" };
-    }
-  }
-
-  async delete(id) {
-    try {
-      const solicitation = await Solicitation.findById(id);
-
-      if (!solicitation) {
-        return { error: false, message: "Solicitation not found" };
-      }
-
-      await solicitation.deleteOne();
-
-      return { success: true, message: `Solicitation ${id} deleted` };
-    } catch (error) {
-      return { error: false, message: "Internal server error" };
+      throw new Error(error.message);
+    } finally {
+      await mongoose.connection.close();
     }
   }
 }

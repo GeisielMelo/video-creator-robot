@@ -6,8 +6,8 @@ import Queue from "../middlewares/queue";
 class FileController {
   async downloadFile(req, res) {
     try {
-      const { userId, solicitationNumber, file } = req.body;
-      const filePath = path.join(__dirname, `../downloads/${userId}/${solicitationNumber}/${file}`);
+      const { userId, solicitationNumber } = req.params;
+      const filePath = path.join(__dirname, `../archives/${userId}/output/${solicitationNumber}.mp4`);
 
       if (!fs.existsSync(filePath)) {
         return res.status(404).json({ error: "File not found" });
@@ -16,7 +16,7 @@ class FileController {
       const stream = fs.createReadStream(filePath);
 
       res.setHeader("Content-Type", "application/octet-stream");
-      res.setHeader("Content-Disposition", `attachment; filename=${file}`);
+      res.setHeader("Content-Disposition", `attachment; filename=${solicitationNumber}.mp4`);
 
       stream.pipe(res);
     } catch (error) {
@@ -29,7 +29,7 @@ class FileController {
     try {
       const { userId, questions, solicitationNumber } = req.body;
       const quiz = { userId, questions, solicitationNumber };
-      await Queue.add('QuizCreation', { quiz });
+      await Queue.add("QuizCreation", { quiz });
       return res.status(200).json({ success: "Quiz solicitation created." });
     } catch (error) {
       return res.status(500).json({ error: "Creation: Internal server error." });

@@ -8,7 +8,7 @@ import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import { Loading } from "../../components/Loading";
 import { processQuiz } from "../../utils/StandardCreationUtils";
-import { createQuiz, indexQuestions, createUsedQuestions } from "../../services/api";
+import { createQuiz, indexQuestions, createUsedQuestions, createSolicitation } from "../../services/api";
 
 const Section = styled.section`
   display: flex;
@@ -136,19 +136,11 @@ const StandardCreation = () => {
     }
   };
 
-  const handleGenerateSolicitationNumber = () => {
-    const min = Math.pow(10, 10);
-    const max = Math.pow(10, 11) - 1;
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  };
-
   const handleSubmit = async () => {
     if (questionsAmount !== 6) {
       return alert("You need to add 6 questions.");
     }
     setIsProcessing(true);
-
-    const solicitationNumber = handleGenerateSolicitationNumber();
 
     let newQuestions = [];
 
@@ -157,6 +149,8 @@ const StandardCreation = () => {
     });
 
     try {
+      const { data } = await createSolicitation(user.id);
+      const solicitationNumber = data;
       await createQuiz(quizList, user.id, solicitationNumber);
       await createUsedQuestions(user.id, newQuestions);
       setOperationFinished(true);
@@ -164,7 +158,7 @@ const StandardCreation = () => {
       navigate("/solicitations");
       console.log("Operation finished.");
     } catch (error) {
-      console.log("Something gone wrong.");
+      console.log(error);
     }
   };
 

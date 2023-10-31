@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { fetchSolicitations, downloadVideo } from "../../services/api";
 import DoneIcon from "@mui/icons-material/Done";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
 const Container = styled.div`
   display: flex;
@@ -52,38 +53,58 @@ const Solicitations = () => {
     }
   }, [solicitations]);
 
-  const handleDownload = async (solicitationNumber, file) => {
+  const handleDownload = async (solicitationNumber) => {
     try {
-      return await downloadVideo(user.id, solicitationNumber, file);
+      return await downloadVideo(user.id, solicitationNumber);
     } catch (error) {
-      return console.error("Error on download");
+      return console.error(error);
     }
+  };
+
+  const handleReadableTime = (updatedAt) => {
+    const regex = /(\d{2}:\d{2})/;
+    const match = updatedAt.match(regex);
+    return match ? match[1] : null;
+  };
+
+  const handleReadableDate = (updatedAt) => {
+    const regex = /^(\d{4}-\d{2}-\d{2})/;
+    const match = updatedAt.match(regex);
+    return match ? match[1] : null;
   };
 
   return (
     <>
-      {solicitations === null ||
-        (Array.isArray(solicitations) && solicitations.length === 0 && <p>No solicitations found.</p>)}
-      {solicitations?.map((solicitation, index) => {
-        return (
+      {solicitations === null ? (
+        <Container key={0}>
+          <p>ID: Loading...</p>
+          <p>Loading...</p>
+          <button disabled={true}>Download</button>
+        </Container>
+      ) : (
+        solicitations.map((solicitation, index) => (
           <Container key={index}>
-            <p>ID: {solicitation.folder}</p>
+            <p>ID: {solicitation._id}</p>
             <p>
-              {solicitation.archive[0] ? (
-                <DoneIcon style={{ color: "green" }} />
-              ) : (
-                <QueryBuilderIcon style={{ color: "orange" }} />
-              )}
+              {solicitation.status === "done" ? (
+                <DoneIcon titleAccess={"Done"} style={{ color: "green" }} />
+              ) : solicitation.status === "fail" ? (
+                <ErrorOutlineIcon titleAccess={"Fail"} style={{ color: "red" }} />
+              ) : solicitation.status === "pending" ? (
+                <QueryBuilderIcon titleAccess={"Pending"} style={{ color: "orange" }} />
+              ) : null}
             </p>
+            <p>{handleReadableDate(solicitation.updatedAt)}</p>
+            <p>{handleReadableTime(solicitation.updatedAt)}</p>
             <button
-              disabled={!solicitation.archive[0]}
-              onClick={() => handleDownload(solicitation.folder, solicitation.archive[0])}
+              disabled={solicitation.status === "done" ? false : true}
+              onClick={() => handleDownload(solicitation._id)}
             >
               Download
             </button>
           </Container>
-        );
-      })}
+        ))
+      )}
     </>
   );
 };

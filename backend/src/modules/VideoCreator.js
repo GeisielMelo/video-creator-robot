@@ -5,9 +5,9 @@ class VideoCreator {
   constructor(userId, solicitationNumber) {
     this.userId = userId;
     this.solicitationNumber = solicitationNumber;
-    this.outputPath = path.resolve(__dirname, `../downloads/${userId}/${solicitationNumber}/video.mp4`);
-    this.videoPath = path.resolve(__dirname, `../downloads/${userId}/out.mp4`);
-    this.audioPath = path.resolve(__dirname, `../downloads/${userId}/out.mp3`);
+    this.outputPath = path.resolve(__dirname, `../archives/${userId}/output/${solicitationNumber}.mp4`);
+    this.videoPath = path.resolve(__dirname, `../archives/${userId}/processing/out.mp4`);
+    this.audioPath = path.resolve(__dirname, `../archives/${userId}/processing/out.mp3`);
     this.trackPath = path.resolve(__dirname, `../templates/track.mp3`);
   }
 

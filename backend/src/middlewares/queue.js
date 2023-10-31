@@ -3,7 +3,14 @@ import redisConfig from "../config/redis";
 import * as jobs from "../jobs";
 
 const queues = Object.values(jobs).map((job) => ({
-  bull: new Queue(job.key, redisConfig),
+  bull: new Queue(job.key, {
+    redis: redisConfig,
+    concurrency: 1,
+    limiter: {
+      max: 1,
+      duration: 10000,
+    },
+  }),
   name: job.key,
   handle: job.handle,
 }));
