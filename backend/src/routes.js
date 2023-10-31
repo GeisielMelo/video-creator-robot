@@ -13,7 +13,7 @@ routes.post("/users", UsersController.create);
 routes.post("/sessions", SessionsController.create);
 routes.get("/sessions/:email", SessionsController.show);
 
-routes.post("/files/teste", FileController.createQuiz); //////////////////
+routes.post("/files/teste", FileController.createQuiz);
 
 // Every route after this middleware will need a token.
 routes.use(auth);
@@ -24,10 +24,9 @@ routes.delete("/users/:id", UsersController.delete);
 routes.get("/users/:id", UsersController.show);
 
 // Files
-routes.post("/files/download/", FileController.downloadFile);
+routes.get("/files/download/:userId/:solicitationNumber", FileController.downloadFile);
 routes.post("/files", FileController.createQuiz);
 routes.get("/files/solicitation/:userId", FileController.fetchSolicitationData);
-
 
 // Solicitations
 routes.get("/solicitations/:userId", SolicitationController.index);
