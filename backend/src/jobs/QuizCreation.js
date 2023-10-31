@@ -4,6 +4,7 @@ import AudioConcatenator from "../modules/AudioConcatenator";
 import TextToSpeechCreator from "../modules/TextToSpeechCreator";
 import VideoCreator from "../modules/VideoCreator";
 import FilesManagement from "../modules/FilesManagement";
+import updateSolicitationStatus from "../utils/updateSolicitationStatus";
 
 export default {
   key: "QuizCreation",
@@ -26,8 +27,10 @@ export default {
       await audioConcatenator.concatenate();
       await videoCreator.render();
       await filesManagement.clearProcessingFolder();
-      return console.log("Successfully created.");
+      await updateSolicitationStatus(solicitationNumber, "done");
+      return { Job: "Quiz Creation: Done" };
     } catch (error) {
+      await updateSolicitationStatus(solicitationNumber, "fail");
       return console.log(error);
     }
   },
