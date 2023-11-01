@@ -20,14 +20,14 @@ export default {
     const videoCreator = new VideoCreator(userId, solicitationNumber);
 
     try {
-      // await filesManagement.createUserFolders();
-      // await filesManagement.clearProcessingFolder();
-      // await textToImagesCreator.render();
-      // await textToSpeechCreator.CreateAudiosWithElevenLabs();
-      // await imageToVideoCreator.render();
-      // await audioConcatenator.concatenate();
-      // await videoCreator.render();
-      // await filesManagement.clearProcessingFolder();
+      await filesManagement.createUserFolders();
+      await filesManagement.clearProcessingFolder();
+      await textToImagesCreator.render();
+      await textToSpeechCreator.CreateAudiosWithElevenLabs();
+      await imageToVideoCreator.render();
+      await audioConcatenator.concatenate();
+      await videoCreator.render();
+      await filesManagement.clearProcessingFolder();
       await QuizController.create(userId, questions);
       await SolicitationController.update(solicitationNumber, "done");
       return console.log("Job - Quiz Creation: Done");
