@@ -21,8 +21,8 @@ class SolicitationController {
 
   async create(req, res) {
     try {
-      const { userId } = req.body;
-      console.log(userId);
+      const { userId, solicitationType } = req.body;
+
       const user = await User.findById(userId);
 
       if (!user) {
@@ -31,6 +31,7 @@ class SolicitationController {
 
       const createdSolicitation = await Solicitation.create({
         userId: userId,
+        type: solicitationType,
         status: "pending",
       });
 
