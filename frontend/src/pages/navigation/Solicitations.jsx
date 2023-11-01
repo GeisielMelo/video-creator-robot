@@ -49,7 +49,15 @@ const Solicitations = () => {
 
   useEffect(() => {
     if (!solicitations) {
-      fetchSolicitations(user.id).then((res) => setSolicitations(res.data));
+      const fetchData = async () => {
+        try {
+          const response = await fetchSolicitations(user.id);
+          setSolicitations(response.data);
+        } catch (error) {
+          console.error("Cannot reach the server");
+        }
+      };
+      fetchData();
     }
   }, [solicitations]);
 
@@ -64,27 +72,40 @@ const Solicitations = () => {
   const handleReadableTime = (updatedAt) => {
     const regex = /(\d{2}:\d{2})/;
     const match = updatedAt.match(regex);
-    return match ? match[1] : null;
+
+    if (match) {
+      const utcTime = moment(updatedAt).tz("Etc/GMT+3");
+      return utcTime.format("HH:mm");
+    } else {
+      return null;
+    }
   };
 
   const handleReadableDate = (updatedAt) => {
     const regex = /^(\d{4}-\d{2}-\d{2})/;
     const match = updatedAt.match(regex);
-    return match ? match[1] : null;
+
+    if (match) {
+      const utcDate = moment.tz(match[1], "Etc/GMT+0");
+      const gmtMinus3Date = utcDate.clone().subtract(3, "hours");
+      return gmtMinus3Date.format("DD-MM-YYYY");
+    } else {
+      return null;
+    }
   };
 
   return (
     <>
       {solicitations === null ? (
         <Container key={0}>
-          <p>ID: Loading...</p>
+          <p>Loading...</p>
           <p>Loading...</p>
           <button disabled={true}>Download</button>
         </Container>
       ) : (
         solicitations.map((solicitation, index) => (
           <Container key={index}>
-            <p>ID: {solicitation._id}</p>
+            <p>{solicitation.type}</p>
             <p>
               {solicitation.status === "done" ? (
                 <DoneIcon titleAccess={"Done"} style={{ color: "green" }} />

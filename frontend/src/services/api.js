@@ -27,13 +27,9 @@ export const indexQuestions = async (userId) => {
   return api.get(`/questions/${userId}`);
 };
 
-export const createUsedQuestions = async (userId, questions) => {
-  return api.post("/questions/", { userId, questions });
-};
-
 // Solicitations
-export const createSolicitation = async (userId) => {
-  return api.post("/solicitations/", { userId });
+export const createSolicitation = async (userId, solicitationType) => {
+  return api.post("/solicitations/", { userId, solicitationType });
 };
 
 export const fetchSolicitations = async (userId) => {
@@ -44,8 +40,6 @@ export const fetchSolicitations = async (userId) => {
 export const createQuiz = async (questions, userId, solicitationNumber) => {
   return api.post("/files/", { questions, userId, solicitationNumber });
 };
-
-// Find solicitations based on the user id.
 
 // Downloads
 export const downloadVideo = async (userId, solicitationNumber) => {

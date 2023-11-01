@@ -8,7 +8,7 @@ import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import { Loading } from "../../components/Loading";
 import { processQuiz } from "../../utils/StandardCreationUtils";
-import { createQuiz, indexQuestions, createUsedQuestions, createSolicitation } from "../../services/api";
+import { createQuiz, indexQuestions, createSolicitation } from "../../services/api";
 
 const Section = styled.section`
   display: flex;
@@ -142,17 +142,10 @@ const StandardCreation = () => {
     }
     setIsProcessing(true);
 
-    let newQuestions = [];
-
-    quizList.forEach((quiz) => {
-      newQuestions.push(quiz.question);
-    });
-
     try {
-      const { data } = await createSolicitation(user.id);
+      const { data } = await createSolicitation(user.id, 'quiz');
       const solicitationNumber = data;
       await createQuiz(quizList, user.id, solicitationNumber);
-      await createUsedQuestions(user.id, newQuestions);
       setOperationFinished(true);
       setIsProcessing(false);
       navigate("/solicitations");
