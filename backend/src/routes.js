@@ -16,8 +16,8 @@ routes.get("/sessions/:email", SessionsController.show);
 // Every route after this middleware will need a token.
 routes.use(auth);
 
-// Login
-routes.put("/users/:id", UsersController.update);
+// Users
+routes.put("/users", UsersController.update);
 routes.delete("/users/:id", UsersController.delete);
 routes.get("/users/:id", UsersController.show);
 

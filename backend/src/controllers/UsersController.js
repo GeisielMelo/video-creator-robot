@@ -48,26 +48,22 @@ class UsersController {
   // update a user.
   async update(req, res) {
     try {
-      const { id } = req.params;
-      const { name, lastName, email, password } = req.body;
-
-      const user = await User.findById(id);
-
-      if (!user) {
-        return res.status(404).json({ error: "User not found" });
-      }
+      const { id, name, lastName, password } = req.body;
 
       // Encrypt password
       const encryptedPassword = await createPasswordHash(password);
 
-      await user.update({
-        name,
-        lastName,
-        email,
-        password: encryptedPassword,
-      });
+      await User.findByIdAndUpdate(
+        id,
+        {
+          name,
+          lastName,
+          password: encryptedPassword,
+        },
+        { new: true }
+      );
 
-      return res.status(200).json(user);
+      return res.status(201).json({ success: `User Updated.` });
     } catch (error) {
       return res.status(500).json({ error: "Internal server error" });
     }
