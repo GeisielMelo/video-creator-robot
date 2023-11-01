@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 const solicitationSchema = mongoose.Schema(
   {
     userId: { type: String, required: true },
+    type: { type: String, required: true },
     status: { type: String, required: true },
   },
   {
