@@ -13,8 +13,6 @@ routes.post("/users", UsersController.create);
 routes.post("/sessions", SessionsController.create);
 routes.get("/sessions/:email", SessionsController.show);
 
-routes.post("/files/teste", FileController.createQuiz);
-
 // Every route after this middleware will need a token.
 routes.use(auth);
 
@@ -33,7 +31,6 @@ routes.get("/solicitations/:userId", SolicitationController.index);
 routes.post("/solicitations", SolicitationController.create);
 
 // Questions
-routes.post("/questions", QuizController.create);
 routes.get("/questions/:userId", QuizController.index);
 
 export default routes;
