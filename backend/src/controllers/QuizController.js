@@ -1,3 +1,5 @@
+require("dotenv").config();
+import mongoose from "mongoose";
 import Quiz from "../models/Quiz";
 import User from "../models/User";
 
@@ -18,34 +20,42 @@ class QuizController {
   }
 
   // Create or update the quiz repository.
-  async create(req, res) {
+  async create(userId, questions) {
     try {
-      const { userId, questions } = req.body;
+      await mongoose.connect(process.env.MONGODB_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
+
       const user = await User.findById(userId);
 
       if (!user) {
-        return res.status(400).json({ error: "User not found" });
+        throw new Error("User not found");
       }
 
       let quizRepository = await Quiz.findOne({ userId: userId });
 
+      const newQuestions = [];
+
+      // Get only the question text from the questions json and push into the newQuestions array.
+      questions.forEach((element) => {
+        newQuestions.push(element.question);
+      });
+
       if (!quizRepository) {
-        // Se o repositório não existe, crie um novo
         quizRepository = await Quiz.create({
           userId: userId,
-          questions: questions,
+          questions: newQuestions,
         });
       } else {
-        // Se o repositório já existe, adicione as perguntas fornecidas
-        quizRepository.questions = quizRepository.questions.concat(questions);
+        // If repository exists, add new questions to the repository.
+        quizRepository.questions = quizRepository.questions.concat(newQuestions);
         await quizRepository.save();
       }
-
-      return res.json(quizRepository);
     } catch (error) {
-      return res
-        .status(400)
-        .json({ error: "Error creating/updating quiz repository." });
+      throw new Error(error.message);
+    } finally {
+      await mongoose.connection.close();
     }
   }
 }

@@ -5,6 +5,7 @@ import TextToSpeechCreator from "../modules/TextToSpeechCreator";
 import VideoCreator from "../modules/VideoCreator";
 import FilesManagement from "../modules/FilesManagement";
 import SolicitationController from "../controllers/SolicitationController";
+import QuizController from "../controllers/QuizController";
 
 export default {
   key: "QuizCreation",
@@ -27,8 +28,9 @@ export default {
       // await audioConcatenator.concatenate();
       // await videoCreator.render();
       // await filesManagement.clearProcessingFolder();
+      await QuizController.create(userId, questions);
       await SolicitationController.update(solicitationNumber, "done");
-      return { Job: "Quiz Creation: Done" };
+      return console.log("Job - Quiz Creation: Done");
     } catch (error) {
       await SolicitationController.update(solicitationNumber, "fail");
       return console.log(error);
