@@ -48,12 +48,6 @@ class SolicitationController {
         useUnifiedTopology: true,
       });
 
-      const solicitation = await Solicitation.findById(solicitationId);
-
-      if (!solicitation) {
-        throw new Error("Solicitation not found");
-      }
-
       await Solicitation.findByIdAndUpdate(solicitationId, { status: newStatus }, { new: true });
     } catch (error) {
       throw new Error(error.message);
