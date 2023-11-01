@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { fetchUserData } from "../services/api";
 import styled from "styled-components";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
@@ -92,7 +93,8 @@ const Option = styled.p`
 const Profile = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef();
-  const { logout } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
+  const [userInfo, setUserInfo] = useState(null);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -108,6 +110,20 @@ const Profile = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (!userInfo) {
+      const fetchData = async () => {
+        try {
+          const response = await fetchUserData(user.id);
+          setUserInfo(response.data);
+        } catch (error) {
+          console.error("Cannot reach the server.");
+        }
+      };
+      fetchData();
+    }
+  }, [userInfo]);
+
   return (
     <>
       <User>
@@ -120,8 +136,8 @@ const Profile = () => {
 
       {menuOpen && (
         <Menu ref={menuRef}>
-          <Name>"User"</Name>
-          <Email>Email</Email>
+          <Name>{userInfo ? `${userInfo.name} ${userInfo.lastName}` : "undefined"}</Name>
+          <Email>{userInfo ? userInfo.email : "undefined@email.com"}</Email>
           <Line />
           <Option onClick={(e) => logout()}>Logout</Option>
         </Menu>

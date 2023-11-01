@@ -9,8 +9,12 @@ export const createUser = async (name, lastName, email, password) => {
   return api.post("/users/", { name, lastName, email, password });
 };
 
-export const fetchUserData = async (email) => {
-  return api.get(`/users/${email}/`);
+export const updateUserData = async (id, name, lastName, password) => {
+  return api.put("/users/", { id, name, lastName, password });
+};
+
+export const fetchUserData = async (id) => {
+  return api.get(`/users/${id}/`);
 };
 
 // Sessions

@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
+import { updateUserData } from "../../services/api";
 import styled from "styled-components";
 
 const Container = styled.div`
@@ -53,22 +55,36 @@ const Container = styled.div`
       border: 1px solid rgba(212, 213, 216, 255);
       font-family: ${(props) => props.theme.font.family.two};
       font-size: ${(props) => props.theme.font.size.sm};
+      border-radius: 6px;
       cursor: pointer;
     }
   }
 `;
 
 const AtualizarUsuario = () => {
-  const testVariables = {
-    name: "David",
-    lastName: "Contabil",
-    email: "david@tarssolucoes.com.br",
-  };
-
+  const { user, logout } = useContext(AuthContext);
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  const [actualPassword, setActualPassword] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const handleSubmit = async () => {
+    if (!name || !lastName || !password) {
+      return alert("Please fill all fields.");
+    }
+
+    if (password !== confirmPassword) {
+      return alert("Passwords do not match.");
+    }
+
+    try {
+      await updateUserData(user.id, name, lastName, password);
+      logout();
+    } catch (error) {
+      return alert("Cannot reach the server.");
+    }
+  };
 
   return (
     <Container>
@@ -77,7 +93,6 @@ const AtualizarUsuario = () => {
         <input
           type="text"
           value={name}
-          placeholder={testVariables.name}
           onChange={(e) => setName(e.target.value)}
         />
       </span>
@@ -87,7 +102,6 @@ const AtualizarUsuario = () => {
         <input
           type="text"
           value={lastName}
-          placeholder={testVariables.lastName}
           onChange={(e) => setLastName(e.target.value)}
         />
       </span>
@@ -97,23 +111,37 @@ const AtualizarUsuario = () => {
         <input
           type="email"
           value={email}
-          placeholder={testVariables.email}
+          placeholder={user ? user.email : "E-mail"}
           onChange={(e) => setEmail(e.target.value)}
+          disabled={true}
         />
       </span>
 
       <span>
-        <h1>Senha Atual</h1>
+        <h1>Nova Senha</h1>
         <input
           type="password"
-          value={actualPassword}
-          onChange={(e) => setActualPassword(e.target.value)}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      </span>
+
+      <span>
+        <h1>Confirmar Senha</h1>
+        <input
+          type="password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
         />
       </span>
 
       <div>
-        <button>Cancelar</button>
-        <button style={{ backgroundColor: "#1abc9c", color: "#fff" }}>Salvar</button>
+        <button
+          style={{ backgroundColor: "#1abc9c", color: "#fff" }}
+          onClick={() => handleSubmit()}
+        >
+          Salvar
+        </button>
       </div>
     </Container>
   );
