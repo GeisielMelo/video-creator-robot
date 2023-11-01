@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 const Container = styled.div`
@@ -59,56 +59,55 @@ const Container = styled.div`
 `;
 
 const AtualizarUsuario = () => {
-  const testVariables = { name: "David", lastName: "Contabil", email: "david@tarssolucoes.com.br", status: true, group: "Contabil" };
+  const testVariables = {
+    name: "David",
+    lastName: "Contabil",
+    email: "david@tarssolucoes.com.br",
+  };
 
-  const [name, setName] = useState(undefined);
-  const [lastName, setLastName] = useState(undefined);
-  const [email, setEmail] = useState(undefined);
-  const [actualPassword, setActualPassword] = useState(undefined);
-  const [password, setPassword] = useState(undefined);
-  const [repeatPassword, setRepeatPassword] = useState(undefined);
-
-  useEffect(() => {
-    if (name === undefined) setName(testVariables.name);
-    if (lastName === undefined) setLastName(testVariables.lastName);
-    if (email === undefined) setEmail(testVariables.email);
-  });
+  const [name, setName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [actualPassword, setActualPassword] = useState("");
 
   return (
     <Container>
       <span>
         <h1>Nome</h1>
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+        <input
+          type="text"
+          value={name}
+          placeholder={testVariables.name}
+          onChange={(e) => setName(e.target.value)}
+        />
       </span>
 
       <span>
         <h1>Sobrenome</h1>
-        <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+        <input
+          type="text"
+          value={lastName}
+          placeholder={testVariables.lastName}
+          onChange={(e) => setLastName(e.target.value)}
+        />
       </span>
 
       <span>
         <h1>E-mail</h1>
-        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+        <input
+          type="email"
+          value={email}
+          placeholder={testVariables.email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
       </span>
 
       <span>
         <h1>Senha Atual</h1>
-        <input type="password" value={actualPassword} onChange={(e) => setActualPassword(e.target.value)} />
-      </span>
-
-      <span>
-        <h1>Nova Senha</h1>
-        <input type="password" placeholder="Opcional" value={password} onChange={(e) => setPassword(e.target.value)} />
-      </span>
-
-      <span>
-        <h1>Repetir nova Senha</h1>
         <input
           type="password"
-          placeholder="Opcional"
-          value={repeatPassword}
-          disabled={repeatPassword === ""}
-          onChange={(e) => setRepeatPassword(e.target.value)}
+          value={actualPassword}
+          onChange={(e) => setActualPassword(e.target.value)}
         />
       </span>
 
