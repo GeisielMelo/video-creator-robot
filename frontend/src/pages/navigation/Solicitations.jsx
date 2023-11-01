@@ -22,6 +22,7 @@ const Container = styled.div`
   button {
     padding: 0 10px;
     margin: 10px;
+    text-transform: capitalize;
   }
   button {
     padding: 10px;
@@ -54,7 +55,7 @@ const Solicitations = () => {
           const response = await fetchSolicitations(user.id);
           setSolicitations(response.data);
         } catch (error) {
-          console.error("Cannot reach the server");
+          console.error("Cannot reach the server.");
         }
       };
       fetchData();

@@ -93,7 +93,7 @@ const StandardCreation = () => {
           const response = await indexQuestions(user.id);
           setUserQuestions(response.data);
         } catch (error) {
-          console.error("No data found.");
+          console.error("Cannot reach the server.");
           setUserQuestions([]);
         }
       };
