@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon ./src/server.js",
+    "dev": "npm-run-all -p dev:*",
+    "dev:server": "nodemon ./src/server.js",
     "dev:queue": "nodemon ./src/queue.js"
   },
   "keywords": [],
@@ -23,6 +24,7 @@
     "jsonwebtoken": "^9.0.1",
     "mongoose": "^7.3.1",
     "nodemon": "^3.0.1",
+    "npm-run-all": "^4.1.5",
     "sucrase": "^3.34.0",
     "word-wrap": "^1.2.5"
   }
