@@ -1,3 +1,4 @@
+import "dotenv/config";
 import routes from "./routes";
 import "./database";
 const express = require("express");
