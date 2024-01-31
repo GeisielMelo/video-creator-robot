@@ -1,5 +1,5 @@
 import path from "path";
-const fs = require("fs");
+import { createReadStream, statSync, existsSync } from 'fs';
 import { fetchSolicitations } from "../utils/folders";
 import Queue from "../middlewares/queue";
 
@@ -7,18 +7,22 @@ class FileController {
   async downloadFile(req, res) {
     try {
       const { userId, solicitationNumber } = req.params;
+      console.log(userId, solicitationNumber)
       const filePath = path.join(__dirname, `../archives/${userId}/output/${solicitationNumber}.mp4`);
 
-      if (!fs.existsSync(filePath)) {
+      if (!existsSync(filePath)) {
         return res.status(404).json({ error: "File not found" });
       }
 
-      const stream = fs.createReadStream(filePath);
+      const stat = statSync(filePath);
 
       res.setHeader("Content-Type", "application/octet-stream");
+      res.setHeader('Content-Length', `${stat.size}`);
       res.setHeader("Content-Disposition", `attachment; filename=${solicitationNumber}.mp4`);
 
+      const stream = createReadStream(filePath);
       stream.pipe(res);
+      console.log('Finished')
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: "Download: Internal Server Error." });
